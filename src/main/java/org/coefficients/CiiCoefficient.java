@@ -1,7 +1,7 @@
 package org.coefficients;
 
 import org.models.CiiFuelTable;
-import org.models.IceClass;
+import org.models.IceClassEnglish;
 import org.models.ShipTypeEnglish;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 public class CiiCoefficient implements Coefficient {
     private int year;
     private ShipTypeEnglish shipTypeEnglish;
-    private IceClass iceClass;
+    private IceClassEnglish iceClassEnglish;
     private List<String> correctionFactors;
     private Double DWT;
     private Double DWT_old;
@@ -75,8 +75,8 @@ public class CiiCoefficient implements Coefficient {
         this.correctionFactors = correctionFactors;
     }
 
-    public void setIceClass(IceClass iceClass) {
-        this.iceClass = iceClass;
+    public void setIceClass(IceClassEnglish iceClassEnglish) {
+        this.iceClassEnglish = iceClassEnglish;
     }
 
     public void setShipType(ShipTypeEnglish shipTypeEnglish) {
@@ -222,7 +222,7 @@ public class CiiCoefficient implements Coefficient {
     }
 
     private double getFm() {
-        return switch (iceClass) {
+        return switch (iceClassEnglish) {
             case IA_Arc4_PC7, IA_Super_Arc5_PC6 -> 1.05;
             default -> 1.0;
         };
@@ -312,7 +312,7 @@ public class CiiCoefficient implements Coefficient {
     }
 
     private double calculateFiIceClass() {
-        return switch (iceClass.getTitle()) {
+        return switch (iceClassEnglish.getTitle()) {
             case "IC" -> getFiICClass(DWT);
             case "IB" -> getFiIBClass(DWT);
             case "IA" -> getFiIAClass(DWT);

@@ -4,7 +4,7 @@ import org.coefficients.EexiCoefficient;
 import org.coefficients.EexiRequiredCoefficient;
 import org.models.Engine;
 import org.models.FuelType;
-import org.models.IceClass;
+import org.models.IceClassEnglish;
 import org.models.ShipTypeEnglish;
 
 import java.text.DecimalFormat;
@@ -37,7 +37,7 @@ public class Main {
 //        coefficient.setSFC_ME_MDO(165);
 //        coefficient.setSFC_AE_MDO(187);
 //        coefficient.setF_DF_gas(0.1261);
-        coefficient.setIceClass(IceClass.withoutIceClass);
+        coefficient.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         coefficient.setShipTypeEnglish(ShipTypeEnglish.BulkCarrier);
 //        coefficient.setL(250);
 //        coefficient.setL_pp(240);

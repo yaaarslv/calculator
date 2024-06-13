@@ -1,5 +1,7 @@
 package org.models;
 
+import java.util.Arrays;
+
 public enum ShipTypeEnglish {
     BulkCarrier("Bulk carrier"),
     GasCarrier("Gas carrier (not LNG)"),
@@ -23,5 +25,9 @@ public enum ShipTypeEnglish {
 
     public String getTitle() {
         return title;
+    }
+
+    public static ShipTypeEnglish getByTitle(String title) {
+        return Arrays.stream(ShipTypeEnglish.values()).filter(f -> f.title.equals(title)).findFirst().orElse(null);
     }
 }

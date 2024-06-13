@@ -10,8 +10,8 @@ import java.util.*;
 @Getter
 public class EexiCoefficient {
     private ShipTypeEnglish shipTypeEnglish;
-    private IceClass iceClass;
-    private List<String> correctionFactors;
+    private IceClassEnglish iceClassEnglish;
+    private List<CorrectionFactorEnglish> correctionFactorsEnglish;
     private Date deliveryDate;
     private double DWT;
     private double GT;
@@ -80,7 +80,7 @@ public class EexiCoefficient {
     private double f_DF_gas;
 
     public EexiCoefficient() {
-        this.correctionFactors = new ArrayList<>();
+        this.correctionFactorsEnglish = new ArrayList<>();
         this.METypes = new ArrayList<>();
         this.AETypes = new ArrayList<>();
         this.mainEngines = new ArrayList<>();
@@ -102,6 +102,14 @@ public class EexiCoefficient {
         this.SFC_ME_MDO = 0;
         this.SFC_AE_MDO = 0;
         this.f_DF_gas = 1;
+    }
+
+    public void addCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish) {
+        this.correctionFactorsEnglish.add(correctionFactorEnglish);
+    }
+
+    public void removeCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish) {
+        this.correctionFactorsEnglish.remove(correctionFactorEnglish);
     }
 
     public void addMainEngine(Engine engine) {
@@ -190,55 +198,55 @@ public class EexiCoefficient {
         double f_j = 0;
         double f_j_0 = 0;
         double f_j_min = 0;
-        if (iceClass == IceClass.IA_Super_Arc5_PC6 || iceClass == IceClass.IA_Arc4_PC7 || iceClass == IceClass.IB_Ice3 || iceClass == IceClass.IC_Ice2) {
+        if (iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6 || iceClassEnglish == IceClassEnglish.IA_Arc4_PC7 || iceClassEnglish == IceClassEnglish.IB_Ice3 || iceClassEnglish == IceClassEnglish.IC_Ice2) {
             if (shipTypeEnglish == ShipTypeEnglish.Tanker) {
                 f_j_0 = (17.444 * Math.pow(DWT, 0.5766)) / sum;
-                if (iceClass == IceClass.IA_Super_Arc5_PC6) {
+                if (iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
                     f_j_min = 0.2488 * Math.pow(DWT, 0.0903);
-                } else if (iceClass == IceClass.IA_Arc4_PC7) {
+                } else if (iceClassEnglish == IceClassEnglish.IA_Arc4_PC7) {
                     f_j_min = 0.4541 * Math.pow(DWT, 0.0524);
-                } else if (iceClass == IceClass.IB_Ice3) {
+                } else if (iceClassEnglish == IceClassEnglish.IB_Ice3) {
                     f_j_min = 0.7783 * Math.pow(DWT, 0.0145);
-                } else if (iceClass == IceClass.IC_Ice2) {
+                } else if (iceClassEnglish == IceClassEnglish.IC_Ice2) {
                     f_j_min = 0.8741 * Math.pow(DWT, 0.0079);
                 }
 
                 return Math.min((Math.max(f_j_0, f_j_min)), 1);
             } else if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier) {
                 f_j_0 = (17.207 * Math.pow(DWT, 0.5705)) / sum;
-                if (iceClass == IceClass.IA_Super_Arc5_PC6) {
+                if (iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
                     f_j_min = 0.2515 * Math.pow(DWT, 0.0851);
-                } else if (iceClass == IceClass.IA_Arc4_PC7) {
+                } else if (iceClassEnglish == IceClassEnglish.IA_Arc4_PC7) {
                     f_j_min = 0.3918 * Math.pow(DWT, 0.0556);
-                } else if (iceClass == IceClass.IB_Ice3) {
+                } else if (iceClassEnglish == IceClassEnglish.IB_Ice3) {
                     f_j_min = 0.8075 * Math.pow(DWT, 0.0071);
-                } else if (iceClass == IceClass.IC_Ice2) {
+                } else if (iceClassEnglish == IceClassEnglish.IC_Ice2) {
                     f_j_min = 0.8573 * Math.pow(DWT, 0.0087);
                 }
 
                 return Math.min((Math.max(f_j_0, f_j_min)), 1);
             } else if (shipTypeEnglish == ShipTypeEnglish.GenCargo) {
                 f_j_0 = (1.974 * Math.pow(DWT, 0.7987)) / sum;
-                if (iceClass == IceClass.IA_Super_Arc5_PC6) {
+                if (iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
                     f_j_min = 0.1381 * Math.pow(DWT, 0.1435);
-                } else if (iceClass == IceClass.IA_Arc4_PC7) {
+                } else if (iceClassEnglish == IceClassEnglish.IA_Arc4_PC7) {
                     f_j_min = 0.1574 * Math.pow(DWT, 0.144);
-                } else if (iceClass == IceClass.IB_Ice3) {
+                } else if (iceClassEnglish == IceClassEnglish.IB_Ice3) {
                     f_j_min = 0.3256 * Math.pow(DWT, 0.0922);
-                } else if (iceClass == IceClass.IC_Ice2) {
+                } else if (iceClassEnglish == IceClassEnglish.IC_Ice2) {
                     f_j_min = 0.4966 * Math.pow(DWT, 0.0583);
                 }
 
                 return Math.min((Math.max(f_j_0, f_j_min)), 1);
             } else if (shipTypeEnglish == ShipTypeEnglish.Refrigerator) {
                 f_j_0 = (5.598 * Math.pow(DWT, 0.696)) / sum;
-                if (iceClass == IceClass.IA_Super_Arc5_PC6) {
+                if (iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
                     f_j_min = 0.5254 * Math.pow(DWT, 0.0357);
-                } else if (iceClass == IceClass.IA_Arc4_PC7) {
+                } else if (iceClassEnglish == IceClassEnglish.IA_Arc4_PC7) {
                     f_j_min = 0.6325 * Math.pow(DWT, 0.0278);
-                } else if (iceClass == IceClass.IB_Ice3) {
+                } else if (iceClassEnglish == IceClassEnglish.IB_Ice3) {
                     f_j_min = 0.7670 * Math.pow(DWT, 0.0159);
-                } else if (iceClass == IceClass.IC_Ice2) {
+                } else if (iceClassEnglish == IceClassEnglish.IC_Ice2) {
                     f_j_min = 0.8918 * Math.pow(DWT, 0.0079);
                 }
 
@@ -246,7 +254,7 @@ public class EexiCoefficient {
             }
         }
 
-        if (correctionFactors.contains("Шатл-танкер")) {
+        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.ShuttleTanker)) {
             return 0.77;
         } else if (shipTypeEnglish == ShipTypeEnglish.RoRoPassengerCarrier || shipTypeEnglish == ShipTypeEnglish.RoRoCargoCarrier) {
             double F_nl = (0.5144 * V_ref) / (Math.sqrt(L_pp * 9.81));
@@ -356,7 +364,7 @@ public class EexiCoefficient {
 
     private double calculateFcEEDI() {
         double Fc = 1.0;
-        if (shipTypeEnglish == ShipTypeEnglish.Tanker && correctionFactors.contains("Химовоз")) {
+        if (shipTypeEnglish == ShipTypeEnglish.Tanker && correctionFactorsEnglish.contains(CorrectionFactorEnglish.ChemicalTanker)) {
             if (R < 0.98) {
                 Fc = Math.pow(R, -0.7) - 0.014;
             } else if (R >= 0.98) {
@@ -387,14 +395,14 @@ public class EexiCoefficient {
     }
 
     private double getFm() {
-        return switch (iceClass) {
+        return switch (iceClassEnglish) {
             case IA_Arc4_PC7, IA_Super_Arc5_PC6 -> 1.05;
             default -> 1.0;
         };
     }
 
     private double calculateFi() {
-        if (iceClass == IceClass.IC_Ice2 || iceClass == IceClass.IB_Ice3 || iceClass == IceClass.IA_Arc4_PC7 || iceClass == IceClass.IA_Super_Arc5_PC6) {
+        if (iceClassEnglish == IceClassEnglish.IC_Ice2 || iceClassEnglish == IceClassEnglish.IB_Ice3 || iceClassEnglish == IceClassEnglish.IA_Arc4_PC7 || iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
             return calculateFiIceClass() * calculateFiCb();
         } else {
             return 1;
@@ -444,11 +452,11 @@ public class EexiCoefficient {
     }
 
     private double calculateFiIceClass() {
-        return switch (iceClass.getTitle()) {
-            case "IC" -> getFiICClass();
-            case "IB" -> getFiIBClass();
-            case "IA" -> getFiIAClass();
-            case "IA_Super" -> getFiIASuperClass();
+        return switch (iceClassEnglish) {
+            case IC_Ice2 -> getFiICClass();
+            case IB_Ice3 -> getFiIBClass();
+            case IA_Arc4_PC7 -> getFiIAClass();
+            case IA_Super_Arc5_PC6 -> getFiIASuperClass();
             default -> 1.0;
         };
     }
