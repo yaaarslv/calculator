@@ -12,7 +12,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class PanelInputFiller implements ItemListener {
     private final EexiCoefficient coefficient;
