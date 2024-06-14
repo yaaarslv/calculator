@@ -9,8 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PanelInputFiller implements ItemListener {
     private final EexiCoefficient coefficient;
@@ -21,14 +23,95 @@ public class PanelInputFiller implements ItemListener {
     private JTextField breadthField;
     private JLabel draughtLabel;
     private JTextField draughtField;
+    private List<JCheckBox> correctionFactorsCheckBoxes;
 
     public PanelInputFiller(EexiCoefficient coefficient, Language language) {
         this.coefficient = coefficient;
         this.language = language;
+        this.correctionFactorsCheckBoxes = new ArrayList<>();
     }
 
     public void addContentToPanelInput(JPanel panelInput) {
         panelInput.setLayout(null);
+        JLabel shipNameLabel = new JLabel(language == Language.Russian ? "Название судна" : "Ship name");
+        JTextField shipNameField = new JTextField();
+        if (language == Language.Russian) {
+            shipNameLabel.setBounds(300, 10, 100, 20);
+            shipNameField.setBounds(405, 10, 200, 20);
+        } else {
+            shipNameLabel.setBounds(300, 10, 70, 20);
+            shipNameField.setBounds(375, 10, 90, 20);
+        }
+
+        shipNameField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!shipNameField.getText().isEmpty()) {
+                    coefficient.setShipName(shipNameField.getText());
+                    shipNameField.setBackground(Color.WHITE);
+                } else {
+                    shipNameField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        shipNameField.setToolTipText(language == Language.Russian ? "Название судна (для сохранения значения после ввода нажмите 'Enter')" : "Ship name (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(shipNameLabel);
+        panelInput.add(shipNameField);
+
+        JLabel imoNumberLabel = new JLabel(language == Language.Russian ? "Номер IMO" : "IMO number");
+        JTextField imoNumberField = new JTextField();
+        if (language == Language.Russian) {
+            imoNumberLabel.setBounds(615, 10, 70, 20);
+            imoNumberField.setBounds(690, 10, 90, 20);
+        } else {
+            imoNumberLabel.setBounds(475, 10, 70, 20);
+            imoNumberField.setBounds(550, 10, 90, 20);
+        }
+        imoNumberField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!imoNumberField.getText().isEmpty() && isNumeric(imoNumberField.getText())) {
+                    coefficient.setImoNumber(Integer.parseInt(imoNumberField.getText()));
+                    imoNumberField.setBackground(Color.WHITE);
+                } else {
+                    imoNumberField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        imoNumberField.setToolTipText(language == Language.Russian ? "Номер IMO (для сохранения значения после ввода нажмите 'Enter')" : "IMO number (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(imoNumberLabel);
+        panelInput.add(imoNumberField);
+
+        JLabel registerNumberLabel = new JLabel(language == Language.Russian ? "Регистровый номер" : "Register number");
+        JTextField registerNumberField = new JTextField();
+        if (language == Language.Russian) {
+            registerNumberLabel.setBounds(790, 10, 120, 20);
+            registerNumberField.setBounds(915, 10, 90, 20);
+        } else {
+            registerNumberLabel.setBounds(650, 10, 195, 20);
+            registerNumberField.setBounds(750, 10, 90, 20);
+        }
+        registerNumberField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!registerNumberField.getText().isEmpty() && isNumeric(registerNumberField.getText())) {
+                    coefficient.setRegisterNumber(Integer.parseInt(registerNumberField.getText()));
+                    registerNumberField.setBackground(Color.WHITE);
+                } else {
+                    registerNumberField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        registerNumberField.setToolTipText(language == Language.Russian ? "Регистровый номер (для сохранения значения после ввода нажмите 'Enter')" : "Register number (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(registerNumberLabel);
+        panelInput.add(registerNumberField);
+
         JLabel shipTypeLabel = new JLabel(language == Language.Russian ? "Тип судна" : "Ship type");
         shipTypeLabel.setBounds(10, 10, 70, 20);
 
@@ -83,7 +166,7 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(iceClassLabel);
         panelInput.add(iceClassBox);
 
-        lengthBetweenPerpendicularsLabel = new JLabel(language == Language.Russian ? "Длина между перпендикулярами (Lpp), м" : "Length between perpendiculars (Lpp), m");
+        lengthBetweenPerpendicularsLabel = new JLabel(language == Language.Russian ? "<html>Длина между перпендикулярами (L<sub>pp</sub>), м</html>" : "<html>Length between perpendiculars (L<sub>pp</sub>), m</html>");
         lengthBetweenPerpendicularsField = new JTextField();
         if (language == Language.Russian) {
             lengthBetweenPerpendicularsLabel.setBounds(330, 60, 245, 20);
@@ -113,7 +196,7 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(lengthBetweenPerpendicularsLabel);
         panelInput.add(lengthBetweenPerpendicularsField);
 
-        breadthLabel = new JLabel(language == Language.Russian ? "Ширина судна (Bs), м" : "Breadth (Bs), m");
+        breadthLabel = new JLabel(language == Language.Russian ? "<html>Ширина судна (B<sub>s</sub>), м</html>" : "<html>Breadth (B<sub>s</sub>), m</html>");
         breadthField = new JTextField();
         if (language == Language.Russian) {
             breadthLabel.setBounds(680, 60, 125, 20);
@@ -143,7 +226,7 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(breadthLabel);
         panelInput.add(breadthField);
 
-        draughtLabel = new JLabel(language == Language.Russian ? "Осадка судна (ds), м" : "Draught (ds), m");
+        draughtLabel = new JLabel(language == Language.Russian ? "<html>Осадка судна (d<sub>s</sub>), м</html>" : "<html>Draught (d<sub>s</sub>), m</html>");
         draughtField = new JTextField();
         if (language == Language.Russian) {
             draughtLabel.setBounds(910, 60, 125, 20);
@@ -183,15 +266,15 @@ public class PanelInputFiller implements ItemListener {
         JCheckBox RoRoRamp = new JCheckBox(language == Language.Russian ? CorrectionFactorRussian.RoRoRamp.getTitle() : CorrectionFactorEnglish.RoRoRamp.getTitle());
         JCheckBox NonConventionalPropulsion = new JCheckBox(language == Language.Russian ? CorrectionFactorRussian.NonConventionalPropulsion.getTitle() : CorrectionFactorEnglish.NonConventionalPropulsion.getTitle());
 
-        MeetsToTheGeneralIACSRules.setBounds(0, 100, 300, 20);
-        Reliquefaction.setBounds(0, 120, 300, 20);
-        OilTankerOrNLSTanker.setBounds(0, 140, 300, 20);
-        ChemicalTanker.setBounds(0, 160, 300, 20);
-        ShuttleTanker.setBounds(0, 180, 300, 20);
-        CargoCranes.setBounds(0, 200, 300, 20);
-        SideLoaders.setBounds(0, 220, 300, 20);
-        RoRoRamp.setBounds(0, 240, 300, 20);
-        NonConventionalPropulsion.setBounds(0, 260, 300, 20);
+        MeetsToTheGeneralIACSRules.setBounds(10, 100, 300, 20);
+        Reliquefaction.setBounds(10, 120, 300, 20);
+        OilTankerOrNLSTanker.setBounds(10, 140, 300, 20);
+        ChemicalTanker.setBounds(10, 160, 300, 20);
+        ShuttleTanker.setBounds(10, 180, 300, 20);
+        CargoCranes.setBounds(10, 200, 300, 20);
+        SideLoaders.setBounds(10, 220, 300, 20);
+        RoRoRamp.setBounds(10, 240, 300, 20);
+        NonConventionalPropulsion.setBounds(10, 260, 300, 20);
 
         ItemListener correctionFactorsListener = new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
@@ -212,29 +295,106 @@ public class PanelInputFiller implements ItemListener {
                         coefficient.removeCorrectionFactor(CorrectionFactorEnglish.getByTitle(selectedItem.getText()));
                     }
                 }
-                System.out.println(coefficient.getCorrectionFactorsEnglish());
             }
         };
 
-        MeetsToTheGeneralIACSRules.addItemListener(correctionFactorsListener);
-        Reliquefaction.addItemListener(correctionFactorsListener);
-        OilTankerOrNLSTanker.addItemListener(correctionFactorsListener);
-        ChemicalTanker.addItemListener(correctionFactorsListener);
-        ShuttleTanker.addItemListener(correctionFactorsListener);
-        CargoCranes.addItemListener(correctionFactorsListener);
-        SideLoaders.addItemListener(correctionFactorsListener);
-        RoRoRamp.addItemListener(correctionFactorsListener);
-        NonConventionalPropulsion.addItemListener(correctionFactorsListener);
+        correctionFactorsCheckBoxes.add(MeetsToTheGeneralIACSRules);
+        correctionFactorsCheckBoxes.add(Reliquefaction);
+        correctionFactorsCheckBoxes.add(OilTankerOrNLSTanker);
+        correctionFactorsCheckBoxes.add(ChemicalTanker);
+        correctionFactorsCheckBoxes.add(ShuttleTanker);
+        correctionFactorsCheckBoxes.add(CargoCranes);
+        correctionFactorsCheckBoxes.add(SideLoaders);
+        correctionFactorsCheckBoxes.add(RoRoRamp);
+        correctionFactorsCheckBoxes.add(NonConventionalPropulsion);
 
-        panelInput.add(MeetsToTheGeneralIACSRules);
-        panelInput.add(Reliquefaction);
-        panelInput.add(OilTankerOrNLSTanker);
-        panelInput.add(ChemicalTanker);
-        panelInput.add(ShuttleTanker);
-        panelInput.add(CargoCranes);
-        panelInput.add(SideLoaders);
-        panelInput.add(RoRoRamp);
-        panelInput.add(NonConventionalPropulsion);
+        correctionFactorsCheckBoxes.forEach(checkbox -> {
+            checkbox.addItemListener(correctionFactorsListener);
+            panelInput.add(checkbox);
+            checkbox.setEnabled(false);
+        });
+        MeetsToTheGeneralIACSRules.setEnabled(true);
+
+        JLabel vrefLabel = new JLabel(language == Language.Russian ? "<html>Скорость судна (V<sub>ref</sub>), узлы</html>" : "<html>Ship speed (V<sub>ref</sub>), knots</html>");
+        JTextField vrefField = new JTextField();
+        if (language == Language.Russian) {
+            vrefLabel.setBounds(10, 285, 200, 20);
+            vrefField.setBounds(185, 285, 90, 20);
+        } else {
+            vrefLabel.setBounds(10, 285, 200, 20);
+            vrefField.setBounds(165, 285, 90, 20);
+        }
+
+        vrefField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!vrefField.getText().isEmpty() && isNumeric(vrefField.getText())) {
+                    coefficient.setV_ref(Double.parseDouble(vrefField.getText()));
+                    vrefField.setBackground(Color.WHITE);
+                } else {
+                    vrefField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        vrefField.setToolTipText(language == Language.Russian ? "Скорость судна (для сохранения значения после ввода нажмите 'Enter')" : "Speed of the vessel (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(vrefLabel);
+        panelInput.add(vrefField);
+
+        JLabel fwLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент погодных условий (f<sub>w</sub>)</html>" : "<html>Weather factor (f<sub>w</sub>)</html>");
+        JTextField fwField = new JTextField();
+        if (language == Language.Russian) {
+            fwLabel.setBounds(10, 315, 240, 20);
+            fwField.setBounds(245, 315, 90, 20);
+        } else {
+            fwLabel.setBounds(10, 315, 115, 20);
+            fwField.setBounds(135, 315, 90, 20);
+        }
+
+        fwField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!fwField.getText().isEmpty() && isNumeric(fwField.getText())) {
+                    coefficient.setF_w(Double.parseDouble(fwField.getText()));
+                    fwField.setBackground(Color.WHITE);
+                } else {
+                    fwField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        fwField.setToolTipText(language == Language.Russian ? "Коэффициент погодных условий (для сохранения значения после ввода нажмите 'Enter')" : "Weather factor (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(fwLabel);
+        panelInput.add(fwField);
+
+        JLabel fivseLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент особенностей конструкции корпуса (f<sub>iVSE</sub>)</html>" : "<html>Capacity correction factor for ship specific voluntary structural (f<sub>iVSE</sub>)</html>");
+        JTextField fivseField = new JTextField();
+        if (language == Language.Russian) {
+            fivseLabel.setBounds(10, 350, 350, 20);
+            fivseField.setBounds(360, 350, 90, 20);
+        } else {
+            fivseLabel.setBounds(10, 350, 400, 20);
+            fivseField.setBounds(410, 350, 90, 20);
+        }
+
+        fivseField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!fivseField.getText().isEmpty() && isNumeric(fivseField.getText())) {
+                    coefficient.setF_ivse(Double.parseDouble(fivseField.getText()));
+                    fivseField.setBackground(Color.WHITE);
+                } else {
+                    fivseField.setBackground(Color.RED);
+                }
+            }
+        });
+
+        fivseField.setToolTipText(language == Language.Russian ? "Коэффициент погодных условий (для сохранения значения после ввода нажмите 'Enter')" : "Weather factor (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(fivseLabel);
+        panelInput.add(fivseField);
     }
 
     @Override
@@ -250,6 +410,11 @@ public class PanelInputFiller implements ItemListener {
             } else {
                 coefficient.setShipTypeEnglish(ShipTypeEnglish.getByTitle(selectedItem.toString()));
             }
+            List<String> availableFactors = coefficient.getShipTypeAvailableCorrectionFactors(language);
+            correctionFactorsCheckBoxes.forEach(checkbox -> {
+                checkbox.setEnabled(availableFactors.contains(checkbox.getText()));
+                checkbox.setSelected(false);
+            });
         }
     }
 
@@ -281,7 +446,7 @@ public class PanelInputFiller implements ItemListener {
         }
     }
 
-    public static boolean isNumeric(String str) {
+    private static boolean isNumeric(String str) {
         try {
             Double.parseDouble(str);
             return true;

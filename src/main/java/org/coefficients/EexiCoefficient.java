@@ -3,6 +3,7 @@ package org.coefficients;
 import lombok.Getter;
 import lombok.Setter;
 import org.models.*;
+import org.ui.Language;
 
 import java.util.*;
 
@@ -50,7 +51,6 @@ public class EexiCoefficient {
     private double P_AE_eff;
     private double f_AE_eff;
     private double L_pp;
-    private double L;
     private double B_s;
     private double d_s;
     private double delta;
@@ -78,6 +78,9 @@ public class EexiCoefficient {
     private double f_sideloader = 1;
     private double f_roro = 1;
     private double f_DF_gas;
+    private String shipName;
+    private int imoNumber;
+    private int registerNumber;
 
     public EexiCoefficient() {
         this.correctionFactorsEnglish = new ArrayList<>();
@@ -102,6 +105,34 @@ public class EexiCoefficient {
         this.SFC_ME_MDO = 0;
         this.SFC_AE_MDO = 0;
         this.f_DF_gas = 1;
+    }
+
+    public List<String> getShipTypeAvailableCorrectionFactors(Language language) {
+        switch (shipTypeEnglish) {
+            case BulkCarrier -> {
+                return List.of(new String[]{language == Language.Russian ? CorrectionFactorRussian.MeetsToTheGeneralIACSRules.getTitle() : CorrectionFactorEnglish.MeetsToTheGeneralIACSRules.getTitle()});
+            }
+            case GasCarrier, GasCarrierLNG -> {
+                return List.of(new String[]{language == Language.Russian ? CorrectionFactorRussian.Reliquefaction.getTitle() : CorrectionFactorEnglish.Reliquefaction.getTitle()});
+            }
+            case Tanker -> {
+                return List.of(new String[]{language == Language.Russian ? CorrectionFactorRussian.OilTankerOrNLSTanker.getTitle() : CorrectionFactorEnglish.OilTankerOrNLSTanker.getTitle(),
+                        language == Language.Russian ? CorrectionFactorRussian.ChemicalTanker.getTitle() : CorrectionFactorEnglish.ChemicalTanker.getTitle(),
+                        language == Language.Russian ? CorrectionFactorRussian.ShuttleTanker.getTitle() : CorrectionFactorEnglish.ShuttleTanker.getTitle(),
+                        language == Language.Russian ? CorrectionFactorRussian.MeetsToTheGeneralIACSRules.getTitle() : CorrectionFactorEnglish.MeetsToTheGeneralIACSRules.getTitle()});
+            }
+            case GenCargo -> {
+                return List.of(new String[]{language == Language.Russian ? CorrectionFactorRussian.CargoCranes.getTitle() : CorrectionFactorEnglish.CargoCranes.getTitle(),
+                        language == Language.Russian ? CorrectionFactorRussian.SideLoaders.getTitle() : CorrectionFactorEnglish.SideLoaders.getTitle(),
+                        language == Language.Russian ? CorrectionFactorRussian.RoRoRamp.getTitle() : CorrectionFactorEnglish.RoRoRamp.getTitle()});
+            }
+            case CruisePassengerShip -> {
+                return List.of(new String[]{language == Language.Russian ? CorrectionFactorRussian.NonConventionalPropulsion.getTitle() : CorrectionFactorEnglish.NonConventionalPropulsion.getTitle()});
+            }
+            default -> {
+                return List.of(new String[]{});
+            }
+        }
     }
 
     public void addCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish) {
@@ -443,8 +474,8 @@ public class EexiCoefficient {
     }
 
     private double calculateCb() {
-        if (delta != 0 && L != 0 && B_s != 0 && d_s != 0) {
-            return delta / (L * B_s * d_s);
+        if (delta != 0 && L_pp != 0 && B_s != 0 && d_s != 0) {
+            return delta / (L_pp * B_s * d_s);
         } else {
             return 1.0;
         }
