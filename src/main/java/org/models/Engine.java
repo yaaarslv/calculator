@@ -12,8 +12,8 @@ import java.util.Map;
 @Setter
 public class Engine {
     private double fuelTypeCount;
-    private Map<FuelType, Double> SFC_map;
-    private List<FuelType> fuelTypes;
+    private Map<FuelTypeEnglish, Double> SFC_map;
+    private List<FuelTypeEnglish> fuelTypes;
     private double MCR;
     private double P;
     private boolean lngIsMainFuel;
@@ -27,7 +27,7 @@ public class Engine {
         this.lngIsMainFuel = true;
     }
 
-    public void addFuelType(FuelType fuelType, double sfc_fuelType) {
+    public void addFuelType(FuelTypeEnglish fuelType, double sfc_fuelType) {
         this.fuelTypes.add(fuelType);
         this.SFC_map.put(fuelType, sfc_fuelType);
     }

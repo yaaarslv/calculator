@@ -24,13 +24,13 @@ public class EexiCoefficient {
 //    private double P_ME;
     private double efficiencyElectricGenerator1;
     //    private double SFC_ME1;
-//    private Map<FuelType, Double> SFC_ME_map;
+//    private Map<FuelTypeEnglish, Double> SFC_ME_map;
     private double efficiencyElectricGeneratorAE;
     //    private double MCR_AE;
 //    private double P_AE;
 //    private double NAE1Count;
 //    private double SFC_AE;
-//    private Map<FuelType, Double> SFC_AE_map;
+//    private Map<FuelTypeEnglish, Double> SFC_AE_map;
     private double C_F_MDO;
     private double SFC_ME_MDO;
     private double SFC_AE_MDO;
@@ -38,10 +38,10 @@ public class EexiCoefficient {
     private double elPropEngCount;
     private double MCR_PTO;
     private double MCR_PTI;
-    //    private FuelType METype;
-    private List<FuelType> METypes;
-    private List<FuelType> AETypes;
-    //    private FuelType AEType;
+    //    private FuelTypeEnglish METype;
+//    private List<FuelTypeEnglish> METypes;
+//    private List<FuelTypeEnglish> AETypes;
+    //    private FuelTypeEnglish AEType;
     private double f_w;
     private double efficiencyElectricTransmission;
     private double P_ae;
@@ -84,8 +84,8 @@ public class EexiCoefficient {
 
     public EexiCoefficient() {
         this.correctionFactorsEnglish = new ArrayList<>();
-        this.METypes = new ArrayList<>();
-        this.AETypes = new ArrayList<>();
+//        this.METypes = new ArrayList<>();
+//        this.AETypes = new ArrayList<>();
         this.mainEngines = new ArrayList<>();
         this.additionalEngines = new ArrayList<>();
 //        this.SFC_ME_map = new HashMap<>();
@@ -147,8 +147,16 @@ public class EexiCoefficient {
         this.mainEngines.add(engine);
     }
 
+    public void removeMainEngine(Engine engine) {
+        this.mainEngines.remove(engine);
+    }
+
     public void addAdditionalEngine(Engine engine) {
         this.additionalEngines.add(engine);
+    }
+
+    public void removeAdditionalEngine(Engine engine) {
+        this.additionalEngines.remove(engine);
     }
 
     private double calculateSumP_PTI_i() {
@@ -209,7 +217,7 @@ public class EexiCoefficient {
 //        return P_AE;
 //    }
 
-    private double getCByFuel(FuelType fuelType) {
+    private double getCByFuel(FuelTypeEnglish fuelType) {
         return switch (fuelType) {
             case diesel -> 3.206;
             case LFO -> 3.151;
@@ -512,7 +520,7 @@ public class EexiCoefficient {
         double sum1 = 0;
         for (Engine engine : mainEngines) {
             double sum_CF_SFC_ME = 0;
-            for (FuelType type : engine.getFuelTypes()) {
+            for (FuelTypeEnglish type : engine.getFuelTypes()) {
                 double sfc_type = engine.getSFC_map().get(type);
                 sum_CF_SFC_ME += getCByFuel(type) * sfc_type;
             }
@@ -531,7 +539,7 @@ public class EexiCoefficient {
 
         double A = calculateFj() * sum1;
         double sum_CF_SFC_AE = 0;
-        for (FuelType type : additionalEngines.getFirst().getFuelTypes()) {
+        for (FuelTypeEnglish type : additionalEngines.getFirst().getFuelTypes()) {
             double sfc_type = additionalEngines.getFirst().getSFC_map().get(type);
             sum_CF_SFC_AE += getCByFuel(type) * sfc_type;
         }
@@ -544,7 +552,7 @@ public class EexiCoefficient {
         double sum_CF_SFC_ME = 0;
         for (Engine engine : mainEngines) {
             double sum_CF_SFC_ME_i = 0;
-            for (FuelType type : engine.getFuelTypes()) {
+            for (FuelTypeEnglish type : engine.getFuelTypes()) {
                 double sfc_type = engine.getSFC_map().get(type);
                 sum_CF_SFC_ME_i += getCByFuel(type) * sfc_type;
             }

@@ -3,7 +3,7 @@ package org.application;
 import org.coefficients.EexiCoefficient;
 import org.coefficients.EexiRequiredCoefficient;
 import org.models.Engine;
-import org.models.FuelType;
+import org.models.FuelTypeEnglish;
 import org.models.IceClassEnglish;
 import org.models.ShipTypeEnglish;
 
@@ -19,7 +19,7 @@ public class Main {
 
 //        me1.addFuelType(FuelType.LNG, 158);
 //        me1.addFuelType(FuelType.diesel, 6);
-        me2.addFuelType(FuelType.diesel, 166.5);
+        me2.addFuelType(FuelTypeEnglish.diesel, 166.5);
 //        me2.addFuelType(FuelType.diesel, 6);
 
 //        me1.setLngIsMainFuel(true);
@@ -28,7 +28,7 @@ public class Main {
 
 //        ae1.addFuelType(FuelType.LNG, 160);
 //        ae1.addFuelType(FuelType.LNG, 160);
-        ae1.addFuelType(FuelType.diesel, 220);
+        ae1.addFuelType(FuelTypeEnglish.diesel, 220);
 
         coefficient.addMainEngine(me2);
 //        coefficient.addMainEngine(me1);
