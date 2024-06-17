@@ -44,8 +44,16 @@ public class PanelInputFiller implements ItemListener {
         unEditableCells.add(cell);
     }
 
-    public void removeUnEditableCell(int row, int column) {
+    private void removeUnEditableCell(int row, int column) {
         unEditableCells.remove(unEditableCells.stream().filter(cell -> cell.getRow() == row && cell.getColumn() == column).findFirst().orElse(null));
+    }
+
+    private void recalculationIncreaseUnEditableCells(int row) {
+        unEditableCells.stream().filter(cell -> cell.getRow() >= row).forEach(cell -> cell.setRow(cell.getRow() + 1));
+    }
+
+    private void recalculationDecreaseUnEditableCells(int row) {
+        unEditableCells.stream().filter(cell -> cell.getRow() > row).forEach(cell -> cell.setRow(cell.getRow() - 1));
     }
 
     public void addContentToPanelInput(JPanel panelInput) {
@@ -473,8 +481,8 @@ public class PanelInputFiller implements ItemListener {
                     if (model.getValueAt(row, column).equals("2")) {
                         if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
                             model.insertRow(row + 1, new Object[]{null, "--"});
+                            recalculationIncreaseUnEditableCells(row + 1);
                             addUnEditableCell(row + 1, column);
-                            // добавить изменение листа неизменяемых ячеек из-за добавления новых строк и смещения индекса
                         }
                     } else if (model.getValueAt(row, column).equals("1")) {
                         String engType = (String) model.getValueAt(row, 0);
@@ -483,6 +491,7 @@ public class PanelInputFiller implements ItemListener {
                             if (engTypeSus == null) {
                                 model.removeRow(row + 1);
                                 removeUnEditableCell(row + 1, column);
+                                recalculationDecreaseUnEditableCells(row + 1);
                             }
                         }
                     }
