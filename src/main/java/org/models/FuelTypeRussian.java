@@ -3,13 +3,13 @@ package org.models;
 import java.util.Arrays;
 
 public enum FuelTypeRussian {
-    diesel("Diesel/Gas oil"),
-    LFO("Light fuel oil"),
-    HFO("Heavy fuel oil"),
-    LPG("Liquefied petroleum gas"),
-    LNG("Liquefied natural gas"),
-    methanol("Methanol"),
-    ethanol("Ethanol");
+    diesel("Дизельное / Газойль"),
+    LFO("Лёгкое (LFO)"),
+    HFO("Тяжёлое (HFO)"),
+    LPG("Нефтяной газ (LPG)"),
+    LNG("Природный газ (LNG)"),
+    methanol("Метанол"),
+    ethanol("Этанол");
 
     private final String title;
 

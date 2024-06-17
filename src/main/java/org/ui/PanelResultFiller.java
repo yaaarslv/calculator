@@ -1,15 +1,19 @@
 package org.ui;
 
 import org.coefficients.EexiCoefficient;
-import org.models.EngineTypeEnglish;
-import org.models.FuelTypeEnglish;
-import org.models.MyTableModel;
-import org.models.TableModel;
+import org.models.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 public class PanelResultFiller {
     private final EexiCoefficient coefficient;
@@ -21,17 +25,34 @@ public class PanelResultFiller {
     }
 
     public void addContentToPanelResult(JPanel panelResult) {
-        TableModel model1 = new TableModel(EngineTypeEnglish.Main, 1, 15000, 1, 8250, FuelTypeEnglish.diesel, null, 166.5);
-        TableModel model2 = new TableModel(EngineTypeEnglish.Additional, 1, 15000, 1, 8250, FuelTypeEnglish.diesel, null, 166.5);
-        List<TableModel> modelList = new ArrayList<>();
-        modelList.add(model1);
-        modelList.add(model2);
-        JTable table = new JTable(new MyTableModel(modelList));
+        panelResult.setLayout(new BorderLayout());
+        panelResult.setBounds(0, 0, 300, 300);
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50);
-        table.getColumnModel().getColumn(2).setPreferredWidth(150);
+        DefaultTableModel model1 = new DefaultTableModel();
 
-        panelResult.add(table);
+        model1.addColumn(language == Language.Russian ? "Тип двигателя" : "Engine type");
+        model1.addColumn(language == Language.Russian ? "Количество двигателей" : "Engine count");
+        model1.addColumn(language == Language.Russian ? "Мощность (MCR), кВт" : "Power (MCR), kW");
+        model1.addColumn(language == Language.Russian ? "Количество возможных типов топлива" : "Available fuel type count");
+        model1.addColumn(language == Language.Russian ? "Мощность (P), кВт" : "Power (P}), kW");
+        model1.addColumn(language == Language.Russian ? "Тип топлива главного двигателя" : "Main engine fuel type");
+        model1.addColumn(language == Language.Russian ? "Тип запального топлива" : "Pilotfuel type");
+        model1.addColumn(language == Language.Russian ? "Удельный расход топлива (SFC), г / кВт * ч" : "Specific consumption fuel oil (SFC), g / kW * h");
+        var q = new Vector<>();
+        q.add("rffrf");
+        model1.addRow(q);
+        JTable table = new JTable(model1);
+
+        List<String> russianFuelShipType = Arrays.stream(FuelTypeRussian.values()).map(FuelTypeRussian::getTitle).toList();
+        List<String> englishFuelShipType = Arrays.stream(FuelTypeEnglish.values()).map(FuelTypeEnglish::getTitle).toList();
+        JComboBox fuelTypeBox = new JComboBox(language == Language.Russian ? russianFuelShipType.toArray() : englishFuelShipType.toArray());
+
+        table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
+        table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
+
+        table.getColumnModel().getColumns().asIterator().forEachRemaining(column -> column.setWidth(150));
+
+
+        panelResult.add(new JScrollPane(table));
     }
 }

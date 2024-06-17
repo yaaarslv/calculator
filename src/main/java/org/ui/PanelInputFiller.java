@@ -4,13 +4,20 @@ import org.coefficients.EexiCoefficient;
 import org.models.*;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.*;
 import java.util.List;
 
 public class PanelInputFiller implements ItemListener {
@@ -23,11 +30,22 @@ public class PanelInputFiller implements ItemListener {
     private JLabel draughtLabel;
     private JTextField draughtField;
     private List<JCheckBox> correctionFactorsCheckBoxes;
+    private List<Cell> unEditableCells;
 
     public PanelInputFiller(EexiCoefficient coefficient, Language language) {
         this.coefficient = coefficient;
         this.language = language;
         this.correctionFactorsCheckBoxes = new ArrayList<>();
+        this.unEditableCells = new ArrayList<>();
+    }
+
+    private void addUnEditableCell(int row, int column) {
+        Cell cell = new Cell(row, column);
+        unEditableCells.add(cell);
+    }
+
+    public void removeUnEditableCell(int row, int column) {
+        unEditableCells.remove(unEditableCells.stream().filter(cell -> cell.getRow() == row && cell.getColumn() == column).findFirst().orElse(null));
     }
 
     public void addContentToPanelInput(JPanel panelInput) {
@@ -394,13 +412,104 @@ public class PanelInputFiller implements ItemListener {
 
         panelInput.add(fivseLabel);
         panelInput.add(fivseField);
+
+        JPanel panelEngine = new JPanel();
+        DefaultTableModel model = new DefaultTableModel() {
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0) {
+                    return false;
+                } else
+                    return unEditableCells.stream().noneMatch(cell -> cell.getColumn() == column && cell.getRow() == row);
+            }
+        };
+
+        model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "Engine type");
+        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>двигателей</b></html>" : "Engine count");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного двигателя, <br>кВт</b></html>" : "Power (MCR), kW");
+        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>типов топлива для данного двигателя </b></html>" : "Available fuel type count");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, кВт</b></html>" : "Power (P}), kW");
+        model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "Main engine fuel type");
+        model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "Pilotfuel type");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "Specific consumption fuel oil (SFC), g / kW * h");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "Specific consumption fuel oil (SFC), g / kW * h");
+
+        model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
+        model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Additional.getTitle() : EngineTypeEnglish.Additional.getTitle()});
+
+        JTable table = new JTable(model);
+
+        List<String> russianFuelShipType = Arrays.stream(FuelTypeRussian.values()).map(FuelTypeRussian::getTitle).toList();
+        List<String> englishFuelShipType = Arrays.stream(FuelTypeEnglish.values()).map(FuelTypeEnglish::getTitle).toList();
+        JComboBox fuelTypeBox = new JComboBox(language == Language.Russian ? russianFuelShipType.toArray() : englishFuelShipType.toArray());
+        JComboBox engineCountBox = new JComboBox(new Object[] {"1", "2"});
+
+        table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
+        table.getColumnModel().getColumn(1).setPreferredWidth(70);
+        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        table.getColumnModel().getColumn(6).setPreferredWidth(100);
+        table.getColumnModel().getColumn(8).setPreferredWidth(90);
+        table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
+        table.getTableHeader().setPreferredSize(new Dimension(1000, 130));
+        table.setRowHeight(25);
+        table.getTableHeader().setResizingAllowed(false);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setHorizontalTextPosition(SwingConstants.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+
+        panelEngine.setLayout(new BorderLayout());
+        panelEngine.setBounds(500, 350, 1000, getTableHeight(table));
+        table.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        table.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        model.addTableModelListener(e -> {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int column = e.getColumn();
+                if (column == 1) {
+                    int row = e.getFirstRow();
+                    if (model.getValueAt(row, column).equals("2")) {
+                        if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
+                            model.insertRow(row + 1, new Object[]{null, "--"});
+                            addUnEditableCell(row + 1, column);
+                            // добавить изменение листа неизменяемых ячеек из-за добавления новых строк и смещения индекса
+                        }
+                    } else if (model.getValueAt(row, column).equals("1")) {
+                        String engType = (String) model.getValueAt(row, 0);
+                        if (engType != null && row < model.getRowCount() - 1) {
+                            String engTypeSus = (String) model.getValueAt(row + 1, 0);
+                            if (engTypeSus == null) {
+                                model.removeRow(row + 1);
+                                removeUnEditableCell(row + 1, column);
+                            }
+                        }
+                    }
+                    updatePanelEngine(panelEngine, table);
+                }
+            }
+        });
+
+        panelEngine.add(new JScrollPane(table));
+        panelInput.add(panelEngine);
+    }
+
+    private void updatePanelEngine(JPanel panel, JTable table) {
+        panel.setVisible(false);
+        panel.setBounds(500, 350, 1000, getTableHeight(table));
+        panel.setVisible(true);
+    }
+
+    private int getTableHeight(JTable table) {
+        return (table.getModel().getRowCount()) * table.getRowHeight() + table.getTableHeader().getPreferredSize().height + 3;
     }
 
     @Override
     public void itemStateChanged(ItemEvent event) {
     }
 
-    public void itemShipTypeChanged(ItemEvent event) {
+    private void itemShipTypeChanged(ItemEvent event) {
         if (event.getStateChange() == ItemEvent.SELECTED) {
             var selectedItem = event.getItem();
             if (language == Language.Russian) {
@@ -417,7 +526,7 @@ public class PanelInputFiller implements ItemListener {
         }
     }
 
-    public void itemIceClassChanged(ItemEvent event) {
+    private void itemIceClassChanged(ItemEvent event) {
         if (event.getStateChange() == ItemEvent.SELECTED) {
             var selectedItem = event.getItem();
             if (language == Language.Russian) {
