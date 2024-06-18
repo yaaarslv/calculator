@@ -1,6 +1,7 @@
 package org.ui;
 
 import org.coefficients.EexiCoefficient;
+import org.coefficients.EexiRequiredCoefficient;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -16,8 +17,10 @@ public class InputWindow {
     private PanelInputFiller panelInputFiller;
     private PanelResultFiller panelResultFiller;
     private final EexiCoefficient coefficient;
+    private final EexiRequiredCoefficient requiredCoefficient;
+    private final JFrame frame;
 
-    public InputWindow(String lang) {
+    public InputWindow(String lang, JFrame frame) {
         if (lang.equals("Русский")) {
             this.language = Language.Russian;
         } else {
@@ -25,14 +28,18 @@ public class InputWindow {
         }
 
         this.coefficient = new EexiCoefficient();
-        this.panelInputFiller = new PanelInputFiller(coefficient, language);
+        this.requiredCoefficient = new EexiRequiredCoefficient(coefficient);
+        this.panelInputFiller = new PanelInputFiller(coefficient, language, requiredCoefficient);
         this.panelResultFiller = new PanelResultFiller(coefficient, language);
+        this.frame = frame;
     }
 
     public void createAndShowGUI() {
         ImageIcon icon = new ImageIcon("src/main/resources/rmrs.png");
         JFrame frame = new JFrame(language == Language.Russian ? "Расчет коэффициента энергоэффективности существующего судна " +
                 "(КЭСС)" : "Calculation of the energy efficiency existing ship index (EEXI)");
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setMinimumSize(new Dimension(400, 400));
 
         final JTabbedPane tabbedPane = new JTabbedPane();
         JPanel panelInput = new JPanel();
@@ -46,8 +53,6 @@ public class InputWindow {
 
         frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setMinimumSize(new Dimension(400, 400));
 
         frame.getContentPane().add(tabbedPane);
         frame.setVisible(true);

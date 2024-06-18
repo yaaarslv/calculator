@@ -1,27 +1,25 @@
 package org.ui;
 
 import org.coefficients.EexiCoefficient;
+import org.coefficients.EexiRequiredCoefficient;
 import org.models.*;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
 public class PanelInputFiller implements ItemListener {
     private final EexiCoefficient coefficient;
+    private final EexiRequiredCoefficient requiredCoefficient;
     private final Language language;
     private JLabel lengthBetweenPerpendicularsLabel;
     private JTextField lengthBetweenPerpendicularsField;
@@ -32,9 +30,10 @@ public class PanelInputFiller implements ItemListener {
     private List<JCheckBox> correctionFactorsCheckBoxes;
     private List<Cell> unEditableCells;
 
-    public PanelInputFiller(EexiCoefficient coefficient, Language language) {
+    public PanelInputFiller(EexiCoefficient coefficient, Language language, EexiRequiredCoefficient requiredCoefficient) {
         this.coefficient = coefficient;
         this.language = language;
+        this.requiredCoefficient = requiredCoefficient;
         this.correctionFactorsCheckBoxes = new ArrayList<>();
         this.unEditableCells = new ArrayList<>();
     }
@@ -158,6 +157,7 @@ public class PanelInputFiller implements ItemListener {
             public void actionPerformed(ActionEvent e) {
                 if (!deadWeightField.getText().isEmpty() && isNumeric(deadWeightField.getText())) {
                     coefficient.setDWT(Double.parseDouble(deadWeightField.getText()));
+                    System.out.println(coefficient.getDWT());
                     deadWeightField.setBackground(Color.WHITE);
                 } else {
                     deadWeightField.setBackground(Color.RED);
@@ -355,6 +355,7 @@ public class PanelInputFiller implements ItemListener {
             public void actionPerformed(ActionEvent e) {
                 if (!vrefField.getText().isEmpty() && isNumeric(vrefField.getText())) {
                     coefficient.setV_ref(Double.parseDouble(vrefField.getText()));
+                    System.out.println(coefficient.getV_ref());
                     vrefField.setBackground(Color.WHITE);
                 } else {
                     vrefField.setBackground(Color.RED);
@@ -431,35 +432,39 @@ public class PanelInputFiller implements ItemListener {
             }
         };
 
-        model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "Engine type");
-        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>двигателей</b></html>" : "Engine count");
-        model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного двигателя, <br>кВт</b></html>" : "Power (MCR), kW");
-        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>типов топлива для данного двигателя </b></html>" : "Available fuel type count");
-        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, кВт</b></html>" : "Power (P}), kW");
-        model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "Main engine fuel type");
-        model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "Pilotfuel type");
-        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "Specific consumption fuel oil (SFC), g / kW * h");
-        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "Specific consumption fuel oil (SFC), g / kW * h");
+        model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "<html><b>Engine type</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>двигателей</b></html>" : "<html><b>Engine count</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного двигателя, <br>кВт</b></html>" : "<html><b>Power (MCR<sub>i</sub>), kW</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>типов топлива для данного двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "<html><b>Main engine fuel type</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "<html><b>Pilotfuel type</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC), <br>g / kW * h</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC<sub>Pilotfuel</sub>), <br>g / kW * h</b></html>");
 
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Additional.getTitle() : EngineTypeEnglish.Additional.getTitle()});
 
         JTable table = new JTable(model);
+        table.getTableHeader().setReorderingAllowed(false);
 
         List<String> russianFuelShipType = Arrays.stream(FuelTypeRussian.values()).map(FuelTypeRussian::getTitle).toList();
         List<String> englishFuelShipType = Arrays.stream(FuelTypeEnglish.values()).map(FuelTypeEnglish::getTitle).toList();
         JComboBox fuelTypeBox = new JComboBox(language == Language.Russian ? russianFuelShipType.toArray() : englishFuelShipType.toArray());
-        JComboBox engineCountBox = new JComboBox(new Object[] {"1", "2"});
+        JComboBox engineCountBox = new JComboBox(new Object[]{"1", "2"});
+        JComboBox fuelCountBox = new JComboBox(new Object[]{"1", "2"});
 
-        table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
         table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(70);
         table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(fuelCountBox));
         table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
         table.getColumnModel().getColumn(6).setPreferredWidth(100);
-        table.getColumnModel().getColumn(8).setPreferredWidth(90);
         table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
+        table.getColumnModel().getColumn(8).setPreferredWidth(90);
+
         table.getTableHeader().setPreferredSize(new Dimension(1000, 130));
         table.setRowHeight(25);
         table.getTableHeader().setResizingAllowed(false);
@@ -470,43 +475,139 @@ public class PanelInputFiller implements ItemListener {
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         panelEngine.setLayout(new BorderLayout());
-        panelEngine.setBounds(500, 350, 1000, getTableHeight(table));
+        panelEngine.setBounds(520, 150, 1000, getTableHeight(table));
         table.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         table.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         model.addTableModelListener(e -> {
             if (e.getType() == TableModelEvent.UPDATE) {
+                int row = e.getFirstRow();
                 int column = e.getColumn();
-                if (column == 1) {
-                    int row = e.getFirstRow();
-                    if (model.getValueAt(row, column).equals("2")) {
-                        if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
-                            model.insertRow(row + 1, new Object[]{null, "--"});
-                            recalculationIncreaseUnEditableCells(row + 1);
-                            addUnEditableCell(row + 1, column);
-                        }
-                    } else if (model.getValueAt(row, column).equals("1")) {
-                        String engType = (String) model.getValueAt(row, 0);
-                        if (engType != null && row < model.getRowCount() - 1) {
-                            String engTypeSus = (String) model.getValueAt(row + 1, 0);
-                            if (engTypeSus == null) {
-                                model.removeRow(row + 1);
-                                removeUnEditableCell(row + 1, column);
-                                recalculationDecreaseUnEditableCells(row + 1);
+                if (model.getValueAt(row, column) != null && column != 5 && column != 6 && !isNumeric((String) model.getValueAt(row, column))) {
+                    JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимый тип: вводите только числа" : "Unavailable type: please insert only numbers");
+                    model.setValueAt(null, row, column);
+                } else {
+                    if (model.getValueAt(row, column) != null) {
+                        if (column == 1) {
+                            if (model.getValueAt(row, column).equals("2")) {
+                                if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
+                                    model.insertRow(row + 1, new Object[]{null, "--"});
+                                    recalculationIncreaseUnEditableCells(row + 1);
+                                    addUnEditableCell(row + 1, column);
+                                }
+                            } else if (model.getValueAt(row, column).equals("1")) {
+                                String engType = (String) model.getValueAt(row, 0);
+                                if (engType != null && row < model.getRowCount() - 1) {
+                                    String engTypeSus = (String) model.getValueAt(row + 1, 0);
+                                    if (engTypeSus == null) {
+                                        model.removeRow(row + 1);
+                                        removeUnEditableCell(row + 1, column);
+                                        recalculationDecreaseUnEditableCells(row + 1);
+                                    }
+                                }
+                            }
+                            updatePanelEngine(panelEngine, table);
+                        } else if (column == 3) {
+                            if (model.getValueAt(row, column).equals("2")) {
+                                removeUnEditableCell(row, 6);
+                                removeUnEditableCell(row, 8);
+                            } else if (model.getValueAt(row, column).equals("1")) {
+                                model.setValueAt("----------------", row, 6);
+                                model.setValueAt("0", row, 8);
+                                addUnEditableCell(row, 6);
+                                addUnEditableCell(row, 8);
                             }
                         }
                     }
-                    updatePanelEngine(panelEngine, table);
                 }
             }
         });
 
         panelEngine.add(new JScrollPane(table));
+        JButton solveButton = new JButton(language == Language.Russian ? "Вычислить КЭСС" : "Calculate EEXI");
+        solveButton.addActionListener(e -> {
+            setEngineTableData(table);
+            coefficient.getMainEngines().forEach(System.out::println);
+            coefficient.getAdditionalEngines().forEach(System.out::println);
+            double eexi = coefficient.calculateEEXI();
+            double eexi_required = requiredCoefficient.getRequiredEEXI();
+            DecimalFormat df = new DecimalFormat("#.###");
+            String eexi_str = df.format(eexi);
+            String eexi_required_str = df.format(eexi_required);
+            String stock = df.format((eexi_required - eexi) / eexi * 100);
+            System.out.println();
+            System.out.println("Достигнутый EEXI: " + eexi_str + " грамм CO2 / тонн * миль");
+            System.out.println("Требуемый EEXI: " + eexi_required_str + " грамм CO2 / тонн * миль");
+            System.out.println("Запас: " + stock + "%");
+            JOptionPane.showMessageDialog(null, "Достигнутый EEXI: " + eexi_str + " грамм CO2 / тонн * миль\n" +
+                    "Требуемый EEXI: " + eexi_required_str + " грамм CO2 / тонн * миль\n" +
+                    "Запас: " + stock + "%");
+        });
+
+        solveButton.setBounds(10, 700, 150, 20);
         panelInput.add(panelEngine);
+        panelInput.add(solveButton);
+    }
+
+    private void setEngineTableData(JTable table) {
+        int maxIndex = table.getRowCount() - 1;
+        int c = 0;
+        while (c < maxIndex) {
+            String engType = (String) table.getValueAt(c, 0);
+            setEngineData(table, c, engType);
+
+            int engCount = Integer.parseInt((String) table.getValueAt(c, 1));
+            if (engCount == 2) {
+                c++;
+                setEngineData(table, c, engType);
+            }
+
+            c++;
+        }
+    }
+
+    private void setEngineData(JTable table, int c, String engType) {
+        double mcr_i = Double.parseDouble((String) table.getValueAt(c, 2));
+        int fuelTypeCount = Integer.parseInt((String) table.getValueAt(c, 3));
+        double p_i = Double.parseDouble((String) table.getValueAt(c, 4));
+        String mainFuelTypeStr = (String) table.getValueAt(c, 5);
+        String pilotFuelTypeStr = (String) table.getValueAt(c, 6);
+        double sfcMain = Double.parseDouble((String) table.getValueAt(c, 7));
+        double sfcPilot = Double.parseDouble((String) table.getValueAt(c, 8));
+
+        FuelTypeEnglish mainFuelType;
+        FuelTypeEnglish pilotFuelType;
+
+        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i);
+
+        if (language == Language.Russian) {
+            FuelTypeRussian mainTypeRussian = FuelTypeRussian.getByTitle(mainFuelTypeStr);
+            FuelTypeRussian pilotTypeRussian = FuelTypeRussian.getByTitle(pilotFuelTypeStr);
+            mainFuelType = FuelTypeEnglish.valueOf(mainTypeRussian.name());
+            if (pilotTypeRussian != null) {
+                pilotFuelType = FuelTypeEnglish.valueOf(pilotTypeRussian.name());
+                engine.addFuelType(pilotFuelType, sfcPilot);
+            }
+
+        } else {
+            mainFuelType = FuelTypeEnglish.getByTitle(mainFuelTypeStr);
+            pilotFuelType = FuelTypeEnglish.getByTitle(pilotFuelTypeStr);
+            if (pilotFuelType != null) {
+                engine.addFuelType(pilotFuelType, sfcPilot);
+            }
+        }
+
+        engine.addFuelType(mainFuelType, sfcMain);
+
+        if (engType.equals("Главный") || engType.equals("Main")) {
+            coefficient.addMainEngine(engine);
+        } else {
+            coefficient.addAdditionalEngine(engine);
+        }
     }
 
     private void updatePanelEngine(JPanel panel, JTable table) {
         panel.setVisible(false);
-        panel.setBounds(500, 350, 1000, getTableHeight(table));
+        panel.setBounds(520, 150, 1000, getTableHeight(table));
         panel.setVisible(true);
     }
 
