@@ -98,6 +98,7 @@ public class EexiCoefficient {
         this.sideRamp = false;
         this.cargoRamp = false;
         this.f_eff = 0;
+        this.f_w = 1;
         this.P_AE_eff = 0;
         this.P_eff = 0;
         this.f_AE_eff = 0;
