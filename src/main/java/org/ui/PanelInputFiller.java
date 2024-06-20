@@ -636,12 +636,12 @@ public class PanelInputFiller implements ItemListener {
         sideloaderFactorLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент бортовой аппарели (лацпорт) (f<sub>sideloader</sub>)</html>" : "<html>Sideloader factor (f<sub>sideloader</sub>)</html>");
         sideloaderFactorField = new JTextField();
 
-        sideloaderFactorLabel.setBounds(10, 475, 400, 25);
+        sideloaderFactorLabel.setBounds(10, 425, 400, 25);
 
         if (language == Language.Russian) {
-            sideloaderFactorField.setBounds(360, 475, 90, 20);
+            sideloaderFactorField.setBounds(360, 425, 90, 20);
         } else {
-            sideloaderFactorField.setBounds(200, 475, 90, 20);
+            sideloaderFactorField.setBounds(200, 425, 90, 20);
         }
 
         sideloaderFactorField.addActionListener(e -> {
@@ -664,12 +664,12 @@ public class PanelInputFiller implements ItemListener {
         roroRampFactorLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент грузовой аппарели (f<sub>RoRo</sub>)</html>" : "<html>Ro-ro ramp factor (f<sub>RoRo</sub>)</html>");
         roroRampFactorField = new JTextField();
 
-        roroRampFactorLabel.setBounds(10, 500, 255, 25);
+        roroRampFactorLabel.setBounds(10, 450, 255, 25);
 
         if (language == Language.Russian) {
-            roroRampFactorField.setBounds(270, 500, 90, 20);
+            roroRampFactorField.setBounds(270, 450, 90, 20);
         } else {
-            roroRampFactorField.setBounds(175, 500, 90, 20);
+            roroRampFactorField.setBounds(175, 450, 90, 20);
         }
 
         roroRampFactorField.addActionListener(e -> {
@@ -939,7 +939,7 @@ public class PanelInputFiller implements ItemListener {
         tableCranes.setDefaultRenderer(Object.class, centerRenderer);
 
         panelCranes.setLayout(new BorderLayout());
-        panelCranes.setBounds(10, 530, 455, getTableHeight(tableCranes));
+        panelCranes.setBounds(10, 480, 455, getTableHeight(tableCranes));
         tableCranes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         tableCranes.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         modelCranes.addTableModelListener(e -> {
@@ -1016,6 +1016,28 @@ public class PanelInputFiller implements ItemListener {
         solveButton.setBounds(10, 750, 150, 20);
 
         panelInput.add(solveButton);
+
+        JCheckBox calculationOfShipPowerPlantLoads = new JCheckBox(language == Language.Russian ? "Расчёт нагрузок судовой электростанции" : "Auxiliary load power calculation");
+        calculationOfShipPowerPlantLoads.addItemListener(e -> {
+            coefficient.setCalculationOfShipPowerPlantLoads(e.getStateChange() == ItemEvent.SELECTED);
+        });
+        calculationOfShipPowerPlantLoads.setBounds(10, 680, 300, 15);
+
+        JCheckBox propellerShaftPowerLimitation = new JCheckBox(language == Language.Russian ? "Ограничение мощности на гребном валу" : "Propulsion power limitation");
+        propellerShaftPowerLimitation.addItemListener(e -> {
+            coefficient.setPropellerShaftPowerLimitation(e.getStateChange() == ItemEvent.SELECTED);
+        });
+        propellerShaftPowerLimitation.setBounds(10, 700, 300, 15);
+
+        JCheckBox dieselElectricPropulsionPowerPlant = new JCheckBox(language == Language.Russian ? "Дизель-электрическая пропульсивная ЭУ" : "Diesel-electric propulsion");
+        dieselElectricPropulsionPowerPlant.addItemListener(e -> {
+            coefficient.setDieselElectricPropulsionPowerPlant(e.getStateChange() == ItemEvent.SELECTED);
+        });
+        dieselElectricPropulsionPowerPlant.setBounds(10, 720, 300, 15);
+
+        panelInput.add(calculationOfShipPowerPlantLoads);
+        panelInput.add(propellerShaftPowerLimitation);
+        panelInput.add(dieselElectricPropulsionPowerPlant);
     }
 
     private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish
