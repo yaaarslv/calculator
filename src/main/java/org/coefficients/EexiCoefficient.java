@@ -17,20 +17,10 @@ public class EexiCoefficient {
     private double DWT;
     private double GT;
     private double V_ref;
-    //    private int N1Count;
     private List<Engine> mainEngines;
     private List<Engine> additionalEngines;
-    //    private double MCR_ME1;
-//    private double P_ME;
     private double efficiencyElectricGenerator1;
-    //    private double SFC_ME1;
-//    private Map<FuelTypeEnglish, Double> SFC_ME_map;
     private double efficiencyElectricGeneratorAE;
-    //    private double MCR_AE;
-//    private double P_AE;
-//    private double NAE1Count;
-//    private double SFC_AE;
-//    private Map<FuelTypeEnglish, Double> SFC_AE_map;
     private double C_F_MDO;
     private double SFC_ME_MDO;
     private double SFC_AE_MDO;
@@ -38,10 +28,6 @@ public class EexiCoefficient {
     private double elPropEngCount;
     private double MCR_PTO;
     private double MCR_PTI;
-    //    private FuelTypeEnglish METype;
-//    private List<FuelTypeEnglish> METypes;
-//    private List<FuelTypeEnglish> AETypes;
-    //    private FuelTypeEnglish AEType;
     private double f_w;
     private double efficiencyElectricTransmission;
     private double P_ae;
@@ -66,15 +52,15 @@ public class EexiCoefficient {
     private boolean cargoCranes;
     private boolean sideRamp;
     private boolean cargoRamp;
-    private int cargoCrane1Count;
-    private int cargoCrane2Count;
-    private int cargoCrane3Count;
-    private double SWL1;
-    private double SWL2;
-    private double SWL3;
-    private double Reach1;
-    private double Reach2;
-    private double Reach3;
+    private int cargoCrane1Count = 0;
+    private int cargoCrane2Count = 0;
+    private int cargoCrane3Count = 0;
+    private double SWL1 = 0;
+    private double SWL2 = 0;
+    private double SWL3 = 0;
+    private double Reach1 = 0;
+    private double Reach2 = 0;
+    private double Reach3 = 0;
     private double f_sideloader = 1;
     private double f_roro = 1;
     private double f_DF_gas;
@@ -394,11 +380,12 @@ public class EexiCoefficient {
     private double calculateF_l() {
         double f_cranes = 0;
         if (cargoCranes) {
-            f_cranes = 1 + ((0.0519 * SWL1 * cargoCrane1Count * Reach1 + 32.11) + (0.0519 * SWL2 * cargoCrane2Count * Reach2 + 32.11) + (0.0519 * SWL3 * cargoCrane3Count * Reach3 + 32.11)) / getCapacityAC()[0];
+            f_cranes = 1 + ((0.0519 * SWL1 * Reach1 + 32.11) * cargoCrane1Count + (0.0519 * SWL2 * Reach2 + 32.11) * cargoCrane2Count + (0.0519 * SWL3 * Reach3 + 32.11) * cargoCrane3Count) / getCapacityAC()[0];
         } else {
             f_cranes = 1;
         }
 
+        System.out.println("f_l: " + f_cranes * f_sideloader * f_roro);
         return f_cranes * f_sideloader * f_roro;
     }
 

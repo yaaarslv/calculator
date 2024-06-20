@@ -9,8 +9,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -27,9 +25,9 @@ public class PanelInputFiller implements ItemListener {
     private JTextField breadthField;
     private JLabel draughtLabel;
     private JTextField draughtField;
-    private List<JCheckBox> correctionFactorsCheckBoxes;
-    private List<Cell> unEditableCells;
-    private List<Component> temporaryComponents;
+    private final List<JCheckBox> correctionFactorsCheckBoxes;
+    private final List<Cell> unEditableCells;
+    private final List<Component> temporaryComponents;
     private JLabel volumetricDisplacementLabel;
     private JTextField volumetricDisplacementField;
     private JLabel specificCapacityLabel;
@@ -40,6 +38,20 @@ public class PanelInputFiller implements ItemListener {
     private JTextField grossTonnageField;
     private JLabel deadWeightLabel;
     private JTextField deadWeightField;
+    private JLabel lngTankCapacityLabel;
+    private JTextField lngTankCapacityField;
+    private JLabel factorOfReliquefyLabel;
+    private JTextField factorOfReliquefyField;
+    private JLabel factorOfBoilOffGasLabel;
+    private JTextField factorOfBoilOffGasField;
+    private JLabel factorOfDesignPerformanceOfReliquefyLabel;
+    private JTextField factorOfDesignPerformanceOfReliquefyField;
+
+    private JPanel panelCranes;
+    private JLabel sideloaderFactorLabel;
+    private JTextField sideloaderFactorField;
+    private JLabel roroRampFactorLabel;
+    private JTextField roroRampFactorField;
 
     public PanelInputFiller(EexiCoefficient coefficient, Language language, EexiRequiredCoefficient requiredCoefficient) {
         this.coefficient = coefficient;
@@ -82,15 +94,12 @@ public class PanelInputFiller implements ItemListener {
             shipNameField.setBounds(375, 10, 90, 20);
         }
 
-        shipNameField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!shipNameField.getText().isEmpty()) {
-                    coefficient.setShipName(shipNameField.getText());
-                    shipNameField.setBackground(Color.WHITE);
-                } else {
-                    shipNameField.setBackground(Color.RED);
-                }
+        shipNameField.addActionListener(e -> {
+            if (!shipNameField.getText().isEmpty()) {
+                coefficient.setShipName(shipNameField.getText());
+                shipNameField.setBackground(Color.WHITE);
+            } else {
+                shipNameField.setBackground(Color.RED);
             }
         });
 
@@ -108,15 +117,12 @@ public class PanelInputFiller implements ItemListener {
             imoNumberLabel.setBounds(475, 10, 70, 20);
             imoNumberField.setBounds(550, 10, 90, 20);
         }
-        imoNumberField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!imoNumberField.getText().isEmpty() && isNumeric(imoNumberField.getText())) {
-                    coefficient.setImoNumber(Integer.parseInt(imoNumberField.getText()));
-                    imoNumberField.setBackground(Color.WHITE);
-                } else {
-                    imoNumberField.setBackground(Color.RED);
-                }
+        imoNumberField.addActionListener(e -> {
+            if (!imoNumberField.getText().isEmpty() && isNumeric(imoNumberField.getText())) {
+                coefficient.setImoNumber(Integer.parseInt(imoNumberField.getText()));
+                imoNumberField.setBackground(Color.WHITE);
+            } else {
+                imoNumberField.setBackground(Color.RED);
             }
         });
 
@@ -134,15 +140,12 @@ public class PanelInputFiller implements ItemListener {
             registerNumberLabel.setBounds(650, 10, 195, 20);
             registerNumberField.setBounds(750, 10, 90, 20);
         }
-        registerNumberField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!registerNumberField.getText().isEmpty() && isNumeric(registerNumberField.getText())) {
-                    coefficient.setRegisterNumber(Integer.parseInt(registerNumberField.getText()));
-                    registerNumberField.setBackground(Color.WHITE);
-                } else {
-                    registerNumberField.setBackground(Color.RED);
-                }
+        registerNumberField.addActionListener(e -> {
+            if (!registerNumberField.getText().isEmpty() && isNumeric(registerNumberField.getText())) {
+                coefficient.setRegisterNumber(Integer.parseInt(registerNumberField.getText()));
+                registerNumberField.setBackground(Color.WHITE);
+            } else {
+                registerNumberField.setBackground(Color.RED);
             }
         });
 
@@ -167,16 +170,13 @@ public class PanelInputFiller implements ItemListener {
         deadWeightField = new JTextField();
         deadWeightLabel.setBounds(10, 35, 120, 20);
         deadWeightField.setBounds(130, 35, 90, 20);
-        deadWeightField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!deadWeightField.getText().isEmpty() && isNumeric(deadWeightField.getText())) {
-                    coefficient.setDWT(Double.parseDouble(deadWeightField.getText()));
-                    System.out.println(coefficient.getDWT());
-                    deadWeightField.setBackground(Color.WHITE);
-                } else {
-                    deadWeightField.setBackground(Color.RED);
-                }
+        deadWeightField.addActionListener(e -> {
+            if (!deadWeightField.getText().isEmpty() && isNumeric(deadWeightField.getText())) {
+                coefficient.setDWT(Double.parseDouble(deadWeightField.getText()));
+                System.out.println(coefficient.getDWT());
+                deadWeightField.setBackground(Color.WHITE);
+            } else {
+                deadWeightField.setBackground(Color.RED);
             }
         });
 
@@ -184,6 +184,27 @@ public class PanelInputFiller implements ItemListener {
 
         panelInput.add(deadWeightLabel);
         panelInput.add(deadWeightField);
+
+        grossTonnageLabel = new JLabel(language == Language.Russian ? "Гросстоннаж (GT), т" : "Grosstonnage (GT), t");
+        grossTonnageField = new JTextField();
+        grossTonnageLabel.setBounds(230, 35, 120, 20);
+        grossTonnageField.setBounds(355, 35, 90, 20);
+        grossTonnageField.addActionListener(e -> {
+            if (!grossTonnageField.getText().isEmpty() && isNumeric(grossTonnageField.getText())) {
+                coefficient.setGT(Double.parseDouble(grossTonnageField.getText()));
+                grossTonnageField.setBackground(Color.WHITE);
+            } else {
+                grossTonnageField.setBackground(Color.RED);
+            }
+        });
+
+        grossTonnageField.setToolTipText(language == Language.Russian ? "Дедвейт судна (для сохранения значения после ввода нажмите 'Enter')" : "Deadweight of the vessel (to save the value, when finished, press 'Enter')");
+
+        grossTonnageLabel.setVisible(false);
+        grossTonnageField.setVisible(false);
+
+        panelInput.add(grossTonnageLabel);
+        panelInput.add(grossTonnageField);
 
         JLabel iceClassLabel = new JLabel(language == Language.Russian ? "Ледовый класс" : "Ice class");
         if (language == Language.Russian) {
@@ -216,15 +237,12 @@ public class PanelInputFiller implements ItemListener {
             lengthBetweenPerpendicularsField.setBounds(565, 60, 90, 20);
         }
 
-        lengthBetweenPerpendicularsField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!lengthBetweenPerpendicularsField.getText().isEmpty() && isNumeric(lengthBetweenPerpendicularsField.getText())) {
-                    coefficient.setL_pp(Double.parseDouble(lengthBetweenPerpendicularsField.getText()));
-                    lengthBetweenPerpendicularsField.setBackground(Color.WHITE);
-                } else {
-                    lengthBetweenPerpendicularsField.setBackground(Color.RED);
-                }
+        lengthBetweenPerpendicularsField.addActionListener(e -> {
+            if (!lengthBetweenPerpendicularsField.getText().isEmpty() && isNumeric(lengthBetweenPerpendicularsField.getText())) {
+                coefficient.setL_pp(Double.parseDouble(lengthBetweenPerpendicularsField.getText()));
+                lengthBetweenPerpendicularsField.setBackground(Color.WHITE);
+            } else {
+                lengthBetweenPerpendicularsField.setBackground(Color.RED);
             }
         });
 
@@ -246,15 +264,12 @@ public class PanelInputFiller implements ItemListener {
             breadthField.setBounds(760, 60, 90, 20);
         }
 
-        breadthField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!breadthField.getText().isEmpty() && isNumeric(breadthField.getText())) {
-                    coefficient.setB_s(Double.parseDouble(breadthField.getText()));
-                    breadthField.setBackground(Color.WHITE);
-                } else {
-                    breadthField.setBackground(Color.RED);
-                }
+        breadthField.addActionListener(e -> {
+            if (!breadthField.getText().isEmpty() && isNumeric(breadthField.getText())) {
+                coefficient.setB_s(Double.parseDouble(breadthField.getText()));
+                breadthField.setBackground(Color.WHITE);
+            } else {
+                breadthField.setBackground(Color.RED);
             }
         });
 
@@ -276,15 +291,12 @@ public class PanelInputFiller implements ItemListener {
             draughtField.setBounds(955, 60, 90, 20);
         }
 
-        draughtField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!draughtField.getText().isEmpty() && isNumeric(draughtField.getText())) {
-                    coefficient.setB_s(Double.parseDouble(draughtField.getText()));
-                    draughtField.setBackground(Color.WHITE);
-                } else {
-                    draughtField.setBackground(Color.RED);
-                }
+        draughtField.addActionListener(e -> {
+            if (!draughtField.getText().isEmpty() && isNumeric(draughtField.getText())) {
+                coefficient.setB_s(Double.parseDouble(draughtField.getText()));
+                draughtField.setBackground(Color.WHITE);
+            } else {
+                draughtField.setBackground(Color.RED);
             }
         });
 
@@ -362,16 +374,13 @@ public class PanelInputFiller implements ItemListener {
             vrefField.setBounds(165, 285, 90, 20);
         }
 
-        vrefField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!vrefField.getText().isEmpty() && isNumeric(vrefField.getText())) {
-                    coefficient.setV_ref(Double.parseDouble(vrefField.getText()));
-                    System.out.println(coefficient.getV_ref());
-                    vrefField.setBackground(Color.WHITE);
-                } else {
-                    vrefField.setBackground(Color.RED);
-                }
+        vrefField.addActionListener(e -> {
+            if (!vrefField.getText().isEmpty() && isNumeric(vrefField.getText())) {
+                coefficient.setV_ref(Double.parseDouble(vrefField.getText()));
+                System.out.println(coefficient.getV_ref());
+                vrefField.setBackground(Color.WHITE);
+            } else {
+                vrefField.setBackground(Color.RED);
             }
         });
 
@@ -390,15 +399,12 @@ public class PanelInputFiller implements ItemListener {
             fwField.setBounds(135, 315, 90, 20);
         }
 
-        fwField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!fwField.getText().isEmpty() && isNumeric(fwField.getText())) {
-                    coefficient.setF_w(Double.parseDouble(fwField.getText()));
-                    fwField.setBackground(Color.WHITE);
-                } else {
-                    fwField.setBackground(Color.RED);
-                }
+        fwField.addActionListener(e -> {
+            if (!fwField.getText().isEmpty() && isNumeric(fwField.getText())) {
+                coefficient.setF_w(Double.parseDouble(fwField.getText()));
+                fwField.setBackground(Color.WHITE);
+            } else {
+                fwField.setBackground(Color.RED);
             }
         });
 
@@ -417,15 +423,12 @@ public class PanelInputFiller implements ItemListener {
             fivseField.setBounds(410, 350, 90, 20);
         }
 
-        fivseField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!fivseField.getText().isEmpty() && isNumeric(fivseField.getText())) {
-                    coefficient.setF_ivse(Double.parseDouble(fivseField.getText()));
-                    fivseField.setBackground(Color.WHITE);
-                } else {
-                    fivseField.setBackground(Color.RED);
-                }
+        fivseField.addActionListener(e -> {
+            if (!fivseField.getText().isEmpty() && isNumeric(fivseField.getText())) {
+                coefficient.setF_ivse(Double.parseDouble(fivseField.getText()));
+                fivseField.setBackground(Color.WHITE);
+            } else {
+                fivseField.setBackground(Color.RED);
             }
         });
 
@@ -433,6 +436,259 @@ public class PanelInputFiller implements ItemListener {
 
         panelInput.add(fivseLabel);
         panelInput.add(fivseField);
+
+        volumetricDisplacementLabel = new JLabel(language == Language.Russian ? "<html>Объёмное водоизмещение (∇), м<sup>3</sup></html>" : "<html>Volumetric displacement (∇), m<sup>3</sup></html>");
+        volumetricDisplacementField = new JTextField();
+
+        volumetricDisplacementLabel.setBounds(10, 375, 210, 20);
+
+        if (language == Language.Russian) {
+            volumetricDisplacementField.setBounds(230, 375, 90, 20);
+        } else {
+            volumetricDisplacementField.setBounds(205, 375, 90, 20);
+        }
+
+        volumetricDisplacementField.addActionListener(e -> {
+            if (!volumetricDisplacementField.getText().isEmpty() && isNumeric(volumetricDisplacementField.getText())) {
+                coefficient.setDelta(Double.parseDouble(volumetricDisplacementField.getText()));
+                volumetricDisplacementField.setBackground(Color.WHITE);
+            } else {
+                volumetricDisplacementField.setBackground(Color.RED);
+            }
+        });
+
+        volumetricDisplacementField.setToolTipText(language == Language.Russian ? "Объёмное водоизмещение (для сохранения значения после ввода нажмите 'Enter')" : "Volumetric displacement (to save the value, when finished, press 'Enter')");
+
+        volumetricDisplacementLabel.setVisible(false);
+        volumetricDisplacementField.setVisible(false);
+
+        panelInput.add(volumetricDisplacementLabel);
+        panelInput.add(volumetricDisplacementField);
+
+        specificCapacityLabel = new JLabel(language == Language.Russian ? "<html>Удельная вместимость (R), м<sup>3</sup> / т</html>" : "<html>Specific capacity (R), m<sup>3</sup> / t</html>");
+        specificCapacityField = new JTextField();
+
+        specificCapacityLabel.setBounds(10, 375, 210, 20);
+
+        if (language == Language.Russian) {
+            specificCapacityField.setBounds(220, 375, 90, 20);
+        } else {
+            specificCapacityField.setBounds(180, 375, 90, 20);
+        }
+
+        specificCapacityField.addActionListener(e -> {
+            if (!specificCapacityField.getText().isEmpty() && isNumeric(specificCapacityField.getText())) {
+                coefficient.setR(Double.parseDouble(specificCapacityField.getText()));
+                specificCapacityField.setBackground(Color.WHITE);
+            } else {
+                specificCapacityField.setBackground(Color.RED);
+            }
+        });
+
+        specificCapacityField.setToolTipText(language == Language.Russian ? "Удельная вместимость (для сохранения значения после ввода нажмите 'Enter')" : "Specific capacity (to save the value, when finished, press 'Enter')");
+
+        specificCapacityLabel.setVisible(false);
+        specificCapacityField.setVisible(false);
+
+        panelInput.add(specificCapacityLabel);
+        panelInput.add(specificCapacityField);
+
+        powerOfAdditionalEnginesLabel = new JLabel(language == Language.Russian ? "<html>Мощность вспомогательной установки на ходу судна (P<sub>ae</sub>), кВт</html>" : "<html>Power of additional engines (P<sub>ae</sub>), kW</html>");
+        powerOfAdditionalEnginesField = new JTextField();
+
+        powerOfAdditionalEnginesLabel.setBounds(10, 400, 400, 20);
+
+        if (language == Language.Russian) {
+            powerOfAdditionalEnginesField.setBounds(395, 400, 90, 20);
+        } else {
+            powerOfAdditionalEnginesField.setBounds(240, 400, 90, 20);
+        }
+
+        powerOfAdditionalEnginesField.addActionListener(e -> {
+            if (!powerOfAdditionalEnginesField.getText().isEmpty() && isNumeric(powerOfAdditionalEnginesField.getText())) {
+                coefficient.setP_ae(Double.parseDouble(powerOfAdditionalEnginesField.getText()));
+                powerOfAdditionalEnginesField.setBackground(Color.WHITE);
+            } else {
+                powerOfAdditionalEnginesField.setBackground(Color.RED);
+            }
+        });
+
+        powerOfAdditionalEnginesField.setToolTipText(language == Language.Russian ? "Мощность вспомогательной установки на ходу судна (для сохранения значения после ввода нажмите 'Enter')" : "Power of additional engines (to save the value, when finished, press 'Enter')");
+
+        powerOfAdditionalEnginesLabel.setVisible(false);
+        powerOfAdditionalEnginesField.setVisible(false);
+
+        panelInput.add(powerOfAdditionalEnginesLabel);
+        panelInput.add(powerOfAdditionalEnginesField);
+
+        lngTankCapacityLabel = new JLabel(language == Language.Russian ? "<html>Вместимость танков СПГ (CTC<sub>LNG</sub>), м<sup>3</sup></html>" : "<html>LNG tanks capacity (CTC<sub>LNG</sub>), m<sup>3</sup></html>");
+        lngTankCapacityField = new JTextField();
+
+        lngTankCapacityLabel.setBounds(10, 425, 300, 25);
+
+        if (language == Language.Russian) {
+            lngTankCapacityField.setBounds(255, 425, 90, 20);
+        } else {
+            lngTankCapacityField.setBounds(220, 425, 90, 20);
+        }
+
+        lngTankCapacityField.addActionListener(e -> {
+            if (!lngTankCapacityField.getText().isEmpty() && isNumeric(lngTankCapacityField.getText())) {
+                coefficient.setCTC_LNG(Double.parseDouble(lngTankCapacityField.getText()));
+                lngTankCapacityField.setBackground(Color.WHITE);
+            } else {
+                lngTankCapacityField.setBackground(Color.RED);
+            }
+        });
+
+        lngTankCapacityField.setToolTipText(language == Language.Russian ? "Вместимость танков СПГ (для сохранения значения после ввода нажмите 'Enter')" : "LNG tanks capacity (to save the value, when finished, press 'Enter')");
+
+        lngTankCapacityLabel.setVisible(false);
+        lngTankCapacityField.setVisible(false);
+
+        panelInput.add(lngTankCapacityLabel);
+        panelInput.add(lngTankCapacityField);
+
+        factorOfReliquefyLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент повторного сжижения (R<sub>reliquefy</sub>)</html>" : "<html>Factor of reliquefy (R<sub>reliquefy</sub>)</html>");
+        factorOfReliquefyField = new JTextField();
+
+        factorOfReliquefyLabel.setBounds(10, 450, 300, 25);
+
+        if (language == Language.Russian) {
+            factorOfReliquefyField.setBounds(300, 450, 90, 20);
+        } else {
+            factorOfReliquefyField.setBounds(220, 450, 90, 20);
+        }
+
+        factorOfReliquefyField.addActionListener(e -> {
+            if (!factorOfReliquefyField.getText().isEmpty() && isNumeric(factorOfReliquefyField.getText())) {
+                coefficient.setR_reliquefy(Double.parseDouble(factorOfReliquefyField.getText()));
+                factorOfReliquefyField.setBackground(Color.WHITE);
+            } else {
+                factorOfReliquefyField.setBackground(Color.RED);
+            }
+        });
+
+        factorOfReliquefyField.setToolTipText(language == Language.Russian ? "Коэффициент повторного сжижения (для сохранения значения после ввода нажмите 'Enter')" : "Factor of reliquefy (to save the value, when finished, press 'Enter')");
+
+        factorOfReliquefyLabel.setVisible(false);
+        factorOfReliquefyField.setVisible(false);
+
+        panelInput.add(factorOfReliquefyLabel);
+        panelInput.add(factorOfReliquefyField);
+
+        factorOfBoilOffGasLabel = new JLabel(language == Language.Russian ? "Коэффициент испарения в день (BOR), % / день" : "Factor of boil-offgas (BOR), % / day");
+        factorOfBoilOffGasField = new JTextField();
+
+        factorOfBoilOffGasLabel.setBounds(10, 475, 300, 25);
+
+        if (language == Language.Russian) {
+            factorOfBoilOffGasField.setBounds(305, 475, 90, 20);
+        } else {
+            factorOfBoilOffGasField.setBounds(220, 475, 90, 20);
+        }
+
+        factorOfBoilOffGasField.addActionListener(e -> {
+            if (!factorOfBoilOffGasField.getText().isEmpty() && isNumeric(factorOfBoilOffGasField.getText())) {
+                coefficient.setBOR(Double.parseDouble(factorOfBoilOffGasField.getText()));
+                factorOfBoilOffGasField.setBackground(Color.WHITE);
+            } else {
+                factorOfBoilOffGasField.setBackground(Color.RED);
+            }
+        });
+
+        factorOfBoilOffGasField.setToolTipText(language == Language.Russian ? "Коэффициент испарения в день (для сохранения значения после ввода нажмите 'Enter')" : "Factor of boil-offgas (to save the value, when finished, press 'Enter')");
+
+        factorOfBoilOffGasLabel.setVisible(false);
+        factorOfBoilOffGasField.setVisible(false);
+
+        panelInput.add(factorOfBoilOffGasLabel);
+        panelInput.add(factorOfBoilOffGasField);
+
+        factorOfDesignPerformanceOfReliquefyLabel = new JLabel(language == Language.Russian ? "<html>Коэфф. проектной произв-ти повторного сжижения (COP<sub>cooling</sub>)</html>" : "<html>Factor of design performance of reliquefy (COP<sub>cooling</sub>)</html>");
+        factorOfDesignPerformanceOfReliquefyField = new JTextField();
+
+        factorOfDesignPerformanceOfReliquefyLabel.setBounds(10, 500, 500, 25);
+
+        if (language == Language.Russian) {
+            factorOfDesignPerformanceOfReliquefyField.setBounds(395, 500, 90, 20);
+        } else {
+            factorOfDesignPerformanceOfReliquefyField.setBounds(340, 500, 90, 20);
+        }
+
+        factorOfDesignPerformanceOfReliquefyField.addActionListener(e -> {
+            if (!factorOfDesignPerformanceOfReliquefyField.getText().isEmpty() && isNumeric(factorOfDesignPerformanceOfReliquefyField.getText())) {
+                coefficient.setCOP_cooling(Double.parseDouble(factorOfDesignPerformanceOfReliquefyField.getText()));
+                factorOfDesignPerformanceOfReliquefyField.setBackground(Color.WHITE);
+            } else {
+                factorOfDesignPerformanceOfReliquefyField.setBackground(Color.RED);
+            }
+        });
+
+        factorOfDesignPerformanceOfReliquefyField.setToolTipText(language == Language.Russian ? "Коэффициент проектной производительности повторного сжижения (для сохранения значения после ввода нажмите 'Enter')" : "Factor of design performance of reliquefy (to save the value, when finished, press 'Enter')");
+
+        factorOfDesignPerformanceOfReliquefyLabel.setVisible(false);
+        factorOfDesignPerformanceOfReliquefyField.setVisible(false);
+
+        panelInput.add(factorOfDesignPerformanceOfReliquefyLabel);
+        panelInput.add(factorOfDesignPerformanceOfReliquefyField);
+
+        sideloaderFactorLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент бортовой аппарели (лацпорт) (f<sub>sideloader</sub>)</html>" : "<html>Sideloader factor (f<sub>sideloader</sub>)</html>");
+        sideloaderFactorField = new JTextField();
+
+        sideloaderFactorLabel.setBounds(10, 475, 400, 25);
+
+        if (language == Language.Russian) {
+            sideloaderFactorField.setBounds(360, 475, 90, 20);
+        } else {
+            sideloaderFactorField.setBounds(200, 475, 90, 20);
+        }
+
+        sideloaderFactorField.addActionListener(e -> {
+            if (!sideloaderFactorField.getText().isEmpty() && isNumeric(sideloaderFactorField.getText())) {
+                coefficient.setF_sideloader(Double.parseDouble(sideloaderFactorField.getText()));
+                sideloaderFactorField.setBackground(Color.WHITE);
+            } else {
+                sideloaderFactorField.setBackground(Color.RED);
+            }
+        });
+
+        sideloaderFactorField.setToolTipText(language == Language.Russian ? "Коэффициент бортовой аппарели (лацпорт) (для сохранения значения после ввода нажмите 'Enter')" : "Sideloader factor (to save the value, when finished, press 'Enter')");
+
+        sideloaderFactorLabel.setVisible(false);
+        sideloaderFactorField.setVisible(false);
+
+        panelInput.add(sideloaderFactorLabel);
+        panelInput.add(sideloaderFactorField);
+
+        roroRampFactorLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент грузовой аппарели (f<sub>RoRo</sub>)</html>" : "<html>Ro-ro ramp factor (f<sub>RoRo</sub>)</html>");
+        roroRampFactorField = new JTextField();
+
+        roroRampFactorLabel.setBounds(10, 500, 255, 25);
+
+        if (language == Language.Russian) {
+            roroRampFactorField.setBounds(270, 500, 90, 20);
+        } else {
+            roroRampFactorField.setBounds(175, 500, 90, 20);
+        }
+
+        roroRampFactorField.addActionListener(e -> {
+            if (!roroRampFactorField.getText().isEmpty() && isNumeric(roroRampFactorField.getText())) {
+                coefficient.setF_roro(Double.parseDouble(roroRampFactorField.getText()));
+                roroRampFactorField.setBackground(Color.WHITE);
+            } else {
+                roroRampFactorField.setBackground(Color.RED);
+            }
+        });
+
+        roroRampFactorField.setToolTipText(language == Language.Russian ? "Коэффициент грузовой аппарели (для сохранения значения после ввода нажмите 'Enter')" : "Ro-ro ramp factor (to save the value, when finished, press 'Enter')");
+
+        roroRampFactorLabel.setVisible(false);
+        roroRampFactorField.setVisible(false);
+
+        panelInput.add(roroRampFactorLabel);
+        panelInput.add(roroRampFactorField);
+
 
         JPanel panelEngine = new JPanel();
         DefaultTableModel model = new DefaultTableModel() {
@@ -487,18 +743,21 @@ public class PanelInputFiller implements ItemListener {
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         panelEngine.setLayout(new BorderLayout());
-        panelEngine.setBounds(520, 150, 1000, getTableHeight(table));
+        panelEngine.setBounds(520, 160, 1000, getTableHeight(table));
         table.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         table.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         model.addTableModelListener(e -> {
             if (e.getType() == TableModelEvent.UPDATE) {
                 int row = e.getFirstRow();
                 int column = e.getColumn();
-                if (model.getValueAt(row, column) != null && column != 5 && column != 6 && !isNumeric((String) model.getValueAt(row, column))) {
-                    JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимый тип: вводите только числа" : "Unavailable type: please insert only numbers");
-                    model.setValueAt(null, row, column);
-                } else {
-                    if (model.getValueAt(row, column) != null) {
+                if (model.getValueAt(row, column) != null) {
+                    if (column != 5 && column != 6 && !isNumeric((String) model.getValueAt(row, column))) {
+                        JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимый тип: вводите только числа" : "Unavailable type: please insert only numbers");
+                        model.setValueAt(null, row, column);
+                    } else if (column != 5 && column != 6 && Double.parseDouble((String) model.getValueAt(row, column)) < 0) {
+                        JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимое значение: вводите только только положительные значения" : "Unavailable value: please input only positive numbers");
+                        model.setValueAt(null, row, column);
+                    } else {
                         if (column == 1) {
                             if (model.getValueAt(row, column).equals("2")) {
                                 if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
@@ -538,53 +797,34 @@ public class PanelInputFiller implements ItemListener {
                                 addUnEditableCell(row, 8);
                             }
                         }
+
                     }
                 }
             }
+
         });
 
         panelEngine.add(new JScrollPane(table));
-        JButton solveButton = new JButton(language == Language.Russian ? "Вычислить КЭСС" : "Calculate EEXI");
-        solveButton.addActionListener(e -> {
-            coefficient.getMainEngines().clear();
-            coefficient.getAdditionalEngines().clear();
-            setEngineTableData(table);
-            double eexi = coefficient.calculateEEXI();
-            double eexi_required = requiredCoefficient.getRequiredEEXI();
-            DecimalFormat df = new DecimalFormat("#.###");
-            String eexi_str = df.format(eexi);
-            String eexi_required_str = df.format(eexi_required);
-            String stock = df.format((eexi_required - eexi) / eexi * 100);
-            JOptionPane.showMessageDialog(null, (language == Language.Russian ? "Достигнутый КЭСС: " + eexi_str + " грамм CO2 / тонн * мили\n" : "Attained EEXI: " + eexi_str + " gramm CO2 / tonn * mile\n") +
-                    (language == Language.Russian ? "Требуемый КЭСС: " + eexi_required_str + " грамм CO2 / тонн * мили\n" : "Required EEXI: " + eexi_required_str + " gramm CO2 / tonn * mile\n") +
-                    (language == Language.Russian ? "Запас: " + stock + "%" : "Stock: " + stock + "%"));
-        });
-
-        solveButton.setBounds(10, 700, 150, 20);
         panelInput.add(panelEngine);
-        panelInput.add(solveButton);
 
         JLabel shaftGenCountlabel = new JLabel(language == Language.Russian ? "Количество валогенераторов" : "Shaft generators quantity");
         JTextField shaftGenCountField = new JTextField();
 
         if (language == Language.Russian) {
-            shaftGenCountlabel.setBounds(730, 400, 175, 20);
+            shaftGenCountlabel.setBounds(730, 100, 175, 20);
         } else {
-            shaftGenCountlabel.setBounds(760, 400, 175, 20);
+            shaftGenCountlabel.setBounds(760, 100, 175, 20);
         }
 
 
-        shaftGenCountField.setBounds(910, 400, 90, 20);
+        shaftGenCountField.setBounds(910, 100, 90, 20);
 
-        shaftGenCountField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!shaftGenCountField.getText().isEmpty() && isNumeric(shaftGenCountField.getText())) {
-                    coefficient.setShaftGenCount(Double.parseDouble(shaftGenCountField.getText()));
-                    shaftGenCountField.setBackground(Color.WHITE);
-                } else {
-                    shaftGenCountField.setBackground(Color.RED);
-                }
+        shaftGenCountField.addActionListener(e -> {
+            if (!shaftGenCountField.getText().isEmpty() && isNumeric(shaftGenCountField.getText())) {
+                coefficient.setShaftGenCount(Double.parseDouble(shaftGenCountField.getText()));
+                shaftGenCountField.setBackground(Color.WHITE);
+            } else {
+                shaftGenCountField.setBackground(Color.RED);
             }
         });
 
@@ -597,23 +837,20 @@ public class PanelInputFiller implements ItemListener {
         JTextField shaftGenMcrField = new JTextField();
 
         if (language == Language.Russian) {
-            shaftGenMcrlabel.setBounds(1070, 400, 290, 20);
+            shaftGenMcrlabel.setBounds(1070, 100, 290, 20);
         } else {
-            shaftGenMcrlabel.setBounds(1090, 400, 290, 20);
+            shaftGenMcrlabel.setBounds(1090, 100, 290, 20);
         }
 
 
-        shaftGenMcrField.setBounds(1335, 400, 90, 20);
+        shaftGenMcrField.setBounds(1335, 100, 90, 20);
 
-        shaftGenMcrField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!shaftGenMcrField.getText().isEmpty() && isNumeric(shaftGenMcrField.getText())) {
-                    coefficient.setMCR_PTO(Double.parseDouble(shaftGenMcrField.getText()));
-                    shaftGenMcrField.setBackground(Color.WHITE);
-                } else {
-                    shaftGenMcrField.setBackground(Color.RED);
-                }
+        shaftGenMcrField.addActionListener(e -> {
+            if (!shaftGenMcrField.getText().isEmpty() && isNumeric(shaftGenMcrField.getText())) {
+                coefficient.setMCR_PTO(Double.parseDouble(shaftGenMcrField.getText()));
+                shaftGenMcrField.setBackground(Color.WHITE);
+            } else {
+                shaftGenMcrField.setBackground(Color.RED);
             }
         });
 
@@ -626,23 +863,20 @@ public class PanelInputFiller implements ItemListener {
         JTextField elPropEngCountField = new JTextField();
 
         if (language == Language.Russian) {
-            elPropEngCountlabel.setBounds(690, 425, 225, 20);
+            elPropEngCountlabel.setBounds(690, 125, 225, 20);
         } else {
-            elPropEngCountlabel.setBounds(715, 425, 190, 20);
+            elPropEngCountlabel.setBounds(715, 125, 190, 20);
         }
 
 
-        elPropEngCountField.setBounds(910, 425, 90, 20);
+        elPropEngCountField.setBounds(910, 125, 90, 20);
 
-        elPropEngCountField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!elPropEngCountField.getText().isEmpty() && isNumeric(elPropEngCountField.getText())) {
-                    coefficient.setElPropEngCount(Double.parseDouble(elPropEngCountField.getText()));
-                    elPropEngCountField.setBackground(Color.WHITE);
-                } else {
-                    elPropEngCountField.setBackground(Color.RED);
-                }
+        elPropEngCountField.addActionListener(e -> {
+            if (!elPropEngCountField.getText().isEmpty() && isNumeric(elPropEngCountField.getText())) {
+                coefficient.setElPropEngCount(Double.parseDouble(elPropEngCountField.getText()));
+                elPropEngCountField.setBackground(Color.WHITE);
+            } else {
+                elPropEngCountField.setBackground(Color.RED);
             }
         });
 
@@ -655,23 +889,20 @@ public class PanelInputFiller implements ItemListener {
         JTextField elPropEngMcrField = new JTextField();
 
         if (language == Language.Russian) {
-            elPropEngMcrlabel.setBounds(1035, 425, 290, 20);
+            elPropEngMcrlabel.setBounds(1035, 125, 290, 20);
         } else {
-            elPropEngMcrlabel.setBounds(1042, 425, 290, 20);
+            elPropEngMcrlabel.setBounds(1042, 125, 290, 20);
         }
 
 
-        elPropEngMcrField.setBounds(1335, 425, 90, 20);
+        elPropEngMcrField.setBounds(1335, 125, 90, 20);
 
-        elPropEngMcrField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!elPropEngMcrField.getText().isEmpty() && isNumeric(elPropEngMcrField.getText())) {
-                    coefficient.setMCR_PTI(Double.parseDouble(elPropEngMcrField.getText()));
-                    elPropEngMcrField.setBackground(Color.WHITE);
-                } else {
-                    elPropEngMcrField.setBackground(Color.RED);
-                }
+        elPropEngMcrField.addActionListener(e -> {
+            if (!elPropEngMcrField.getText().isEmpty() && isNumeric(elPropEngMcrField.getText())) {
+                coefficient.setMCR_PTI(Double.parseDouble(elPropEngMcrField.getText()));
+                elPropEngMcrField.setBackground(Color.WHITE);
+            } else {
+                elPropEngMcrField.setBackground(Color.RED);
             }
         });
 
@@ -679,6 +910,57 @@ public class PanelInputFiller implements ItemListener {
 
         panelInput.add(elPropEngMcrlabel);
         panelInput.add(elPropEngMcrField);
+
+
+        panelCranes = new JPanel();
+        DefaultTableModel modelCranes = new DefaultTableModel();
+
+        modelCranes.addColumn("");
+        modelCranes.addColumn(language == Language.Russian ? "<html><b>Количество кранов <br>одинаковой грузоподъёмности</b></html>" : "<html><b>Cranes count with equal load capacity</b></html>");
+        modelCranes.addColumn(language == Language.Russian ? "<html><b>Грузоподъёмность, т</b></html>" : "<html><b>Load capacity, t</b></html>");
+        modelCranes.addColumn(language == Language.Russian ? "<html><b>Высота <br>подъёма, м</b></html>" : "<html><b>Reach, m</b></html>");
+
+        modelCranes.addRow(new Object[]{language == Language.Russian ? "Грузовые краны 1" : "Cargo cranes 1"});
+        modelCranes.addRow(new Object[]{language == Language.Russian ? "Грузовые краны 2" : "Cargo cranes 2"});
+        modelCranes.addRow(new Object[]{language == Language.Russian ? "Грузовые краны 3" : "Cargo cranes 3"});
+
+        JTable tableCranes = new JTable(modelCranes);
+        tableCranes.getTableHeader().setReorderingAllowed(false);
+
+        tableCranes.getColumnModel().getColumn(0).setPreferredWidth(120);
+        tableCranes.getColumnModel().getColumn(1).setPreferredWidth(130);
+        tableCranes.getColumnModel().getColumn(2).setPreferredWidth(140);
+        tableCranes.getColumnModel().getColumn(3).setPreferredWidth(75);
+
+        tableCranes.getTableHeader().setPreferredSize(new Dimension(455, 90));
+        tableCranes.setRowHeight(25);
+        tableCranes.getTableHeader().setResizingAllowed(false);
+
+        tableCranes.setDefaultRenderer(Object.class, centerRenderer);
+
+        panelCranes.setLayout(new BorderLayout());
+        panelCranes.setBounds(10, 530, 455, getTableHeight(tableCranes));
+        tableCranes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        tableCranes.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        modelCranes.addTableModelListener(e -> {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                if (modelCranes.getValueAt(row, column) != null) {
+                    if (!isNumeric((String) modelCranes.getValueAt(row, column))) {
+                        JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимый тип: вводите только числа" : "Unavailable type: please insert only numbers");
+                        modelCranes.setValueAt(null, row, column);
+                    } else if (Double.parseDouble((String) modelCranes.getValueAt(row, column)) < 0) {
+                        JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимое значение: вводите только только положительные значения" : "Unavailable value: please input only positive numbers");
+                        modelCranes.setValueAt(null, row, column);
+                    }
+                }
+            }
+        });
+
+        panelCranes.add(new JScrollPane(tableCranes));
+        panelCranes.setVisible(false);
+        panelInput.add(panelCranes);
 
 
         temporaryComponents.add(lengthBetweenPerpendicularsLabel);
@@ -689,13 +971,55 @@ public class PanelInputFiller implements ItemListener {
         temporaryComponents.add(draughtField);
         temporaryComponents.add(deadWeightLabel);
         temporaryComponents.add(deadWeightField);
-//        temporaryComponents.add(volumetricDisplacementLabel);
-//        temporaryComponents.add(volumetricDisplacementField);
-//        temporaryComponents.add(specificCapacityLabel);
-//        temporaryComponents.add(specificCapacityField);
+        temporaryComponents.add(volumetricDisplacementLabel);
+        temporaryComponents.add(volumetricDisplacementField);
+        temporaryComponents.add(specificCapacityLabel);
+        temporaryComponents.add(specificCapacityField);
+        temporaryComponents.add(grossTonnageLabel);
+        temporaryComponents.add(grossTonnageField);
+        temporaryComponents.add(powerOfAdditionalEnginesLabel);
+        temporaryComponents.add(powerOfAdditionalEnginesField);
+        temporaryComponents.add(lngTankCapacityLabel);
+        temporaryComponents.add(lngTankCapacityField);
+        temporaryComponents.add(factorOfReliquefyLabel);
+        temporaryComponents.add(factorOfReliquefyField);
+        temporaryComponents.add(factorOfBoilOffGasLabel);
+        temporaryComponents.add(factorOfBoilOffGasField);
+        temporaryComponents.add(factorOfDesignPerformanceOfReliquefyLabel);
+        temporaryComponents.add(factorOfDesignPerformanceOfReliquefyField);
+        temporaryComponents.add(panelCranes);
+        temporaryComponents.add(sideloaderFactorLabel);
+        temporaryComponents.add(sideloaderFactorField);
+        temporaryComponents.add(roroRampFactorLabel);
+        temporaryComponents.add(roroRampFactorField);
+
+
+        JButton solveButton = new JButton(language == Language.Russian ? "Вычислить КЭСС" : "Calculate EEXI");
+        solveButton.addActionListener(e -> {
+            coefficient.getMainEngines().clear();
+            coefficient.getAdditionalEngines().clear();
+            setEngineTableData(table);
+            if (coefficient.isCargoCranes()) {
+                setCranesTableData(tableCranes);
+            }
+            double eexi = coefficient.calculateEEXI();
+            double eexi_required = requiredCoefficient.getRequiredEEXI();
+            DecimalFormat df = new DecimalFormat("#.###");
+            String eexi_str = df.format(eexi);
+            String eexi_required_str = df.format(eexi_required);
+            String stock = df.format((eexi_required - eexi) / eexi * 100);
+            JOptionPane.showMessageDialog(null, (language == Language.Russian ? "Достигнутый КЭСС: " + eexi_str + " грамм CO2 / тонн * мили\n" : "Attained EEXI: " + eexi_str + " gramm CO2 / tonn * mile\n") +
+                    (language == Language.Russian ? "Требуемый КЭСС: " + eexi_required_str + " грамм CO2 / тонн * мили\n" : "Required EEXI: " + eexi_required_str + " gramm CO2 / tonn * mile\n") +
+                    (language == Language.Russian ? "Запас: " + stock + "%" : "Stock: " + stock + "%"));
+        });
+
+        solveButton.setBounds(10, 750, 150, 20);
+
+        panelInput.add(solveButton);
     }
 
-    private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish, boolean show) {
+    private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish
+                                                                          correctionFactorEnglish, boolean show) {
         ShipTypeEnglish shipTypeEnglish = coefficient.getShipTypeEnglish();
 
         switch (correctionFactorEnglish) {
@@ -707,12 +1031,64 @@ public class PanelInputFiller implements ItemListener {
             }
 
             case ChemicalTanker -> {
-                if (shipTypeEnglish == ShipTypeEnglish.Tanker) {
-                    specificCapacityLabel.setVisible(show);
-                    specificCapacityField.setVisible(show);
+                specificCapacityLabel.setVisible(show);
+                specificCapacityField.setVisible(show);
+            }
+
+            case Reliquefaction -> {
+                if (shipTypeEnglish == ShipTypeEnglish.GasCarrierLNG) {
+                    lngTankCapacityLabel.setVisible(show);
+                    lngTankCapacityField.setVisible(show);
+                    factorOfReliquefyLabel.setVisible(show);
+                    factorOfReliquefyField.setVisible(show);
+                    factorOfBoilOffGasLabel.setVisible(show);
+                    factorOfBoilOffGasField.setVisible(show);
+                    factorOfDesignPerformanceOfReliquefyLabel.setVisible(show);
+                    factorOfDesignPerformanceOfReliquefyField.setVisible(show);
                 }
             }
+
+            case CargoCranes -> {
+                panelCranes.setVisible(show);
+                coefficient.setCargoCranes(show);
+            }
+
+            case SideLoaders -> {
+                sideloaderFactorLabel.setVisible(show);
+                sideloaderFactorField.setVisible(show);
+                coefficient.setSideRamp(show);
+            }
+
+            case RoRoRamp -> {
+                roroRampFactorLabel.setVisible(show);
+                roroRampFactorField.setVisible(show);
+                coefficient.setCargoRamp(show);
+            }
         }
+    }
+
+    private void setCranesTableData(JTable table) {
+        int count1 = Integer.parseInt(table.getValueAt(0, 1) != null ? (String) table.getValueAt(0, 1) : "0");
+        int count2 = Integer.parseInt(table.getValueAt(1, 1) != null ? (String) table.getValueAt(1, 1) : "0");
+        int count3 = Integer.parseInt(table.getValueAt(2, 1) != null ? (String) table.getValueAt(2, 1) : "0");
+        double SWL1 = Double.parseDouble(table.getValueAt(0, 2) != null ? (String) table.getValueAt(0, 2) : "0");
+        double SWL2 = Double.parseDouble(table.getValueAt(1, 2) != null ? (String) table.getValueAt(1, 2) : "0");
+        double SWL3 = Double.parseDouble(table.getValueAt(2, 2) != null ? (String) table.getValueAt(2, 2) : "0");
+        double reach1 = Double.parseDouble(table.getValueAt(0, 3) != null ? (String) table.getValueAt(0, 3) : "0");
+        double reach2 = Double.parseDouble(table.getValueAt(1, 3) != null ? (String) table.getValueAt(1, 3) : "0");
+        double reach3 = Double.parseDouble(table.getValueAt(2, 3) != null ? (String) table.getValueAt(2, 3) : "0");
+
+        coefficient.setCargoCrane1Count(count1);
+        coefficient.setCargoCrane2Count(count2);
+        coefficient.setCargoCrane3Count(count3);
+
+        coefficient.setSWL1(SWL1);
+        coefficient.setSWL2(SWL2);
+        coefficient.setSWL3(SWL3);
+
+        coefficient.setReach1(reach1);
+        coefficient.setReach2(reach2);
+        coefficient.setReach3(reach3);
     }
 
     private void setEngineTableData(JTable table) {
@@ -817,12 +1193,15 @@ public class PanelInputFiller implements ItemListener {
                 checkbox.setEnabled(availableFactors.contains(checkbox.getText()));
                 checkbox.setSelected(false);
             });
+
             changeFieldsVisibleByShipType(shipTypeEnglish);
         }
     }
 
     private void changeFieldsVisibleByShipType(ShipTypeEnglish shipTypeEnglish) {
         temporaryComponents.forEach(component -> component.setVisible(false));
+        deadWeightLabel.setVisible(true);
+        deadWeightField.setVisible(true);
         switch (shipTypeEnglish) {
             case ContainerCarrier, CombiShip -> {
                 lengthBetweenPerpendicularsLabel.setVisible(true);
@@ -851,8 +1230,8 @@ public class PanelInputFiller implements ItemListener {
                 breadthField.setVisible(true);
                 draughtLabel.setVisible(true);
                 draughtField.setVisible(true);
-                specificCapacityLabel.setVisible(true);
-                specificCapacityField.setVisible(true);
+                volumetricDisplacementLabel.setVisible(true);
+                volumetricDisplacementField.setVisible(true);
                 grossTonnageLabel.setVisible(true);
                 grossTonnageField.setVisible(true);
                 powerOfAdditionalEnginesLabel.setVisible(true);
