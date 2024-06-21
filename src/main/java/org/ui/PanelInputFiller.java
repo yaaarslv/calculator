@@ -28,6 +28,7 @@ public class PanelInputFiller implements ItemListener {
     private final List<JCheckBox> correctionFactorsCheckBoxes;
     private final List<Cell> unEditableCells;
     private final List<Component> temporaryComponents;
+    private int additionalEngineFirstIndex;
     private JLabel volumetricDisplacementLabel;
     private JTextField volumetricDisplacementField;
     private JLabel specificCapacityLabel;
@@ -62,6 +63,7 @@ public class PanelInputFiller implements ItemListener {
         coefficient.setShipTypeEnglish(ShipTypeEnglish.BulkCarrier);
         coefficient.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         this.temporaryComponents = new ArrayList<>();
+        this.additionalEngineFirstIndex = 1;
     }
 
     private void addUnEditableCell(int row, int column) {
@@ -248,8 +250,8 @@ public class PanelInputFiller implements ItemListener {
 
         lengthBetweenPerpendicularsField.setToolTipText(language == Language.Russian ? "Длина между перпендикулярами (для сохранения значения после ввода нажмите 'Enter')" : "Length between perpendiculars (to save the value, when finished, press 'Enter')");
 
-        lengthBetweenPerpendicularsLabel.setVisible(false);
-        lengthBetweenPerpendicularsField.setVisible(false);
+//        lengthBetweenPerpendicularsLabel.setVisible(false);
+//        lengthBetweenPerpendicularsField.setVisible(false);
 
         panelInput.add(lengthBetweenPerpendicularsLabel);
         panelInput.add(lengthBetweenPerpendicularsField);
@@ -275,8 +277,8 @@ public class PanelInputFiller implements ItemListener {
 
         breadthField.setToolTipText(language == Language.Russian ? "Ширина судна (для сохранения значения после ввода нажмите 'Enter')" : "Breadth of the vessel (to save the value, when finished, press 'Enter')");
 
-        breadthLabel.setVisible(false);
-        breadthField.setVisible(false);
+//        breadthLabel.setVisible(false);
+//        breadthField.setVisible(false);
 
         panelInput.add(breadthLabel);
         panelInput.add(breadthField);
@@ -302,8 +304,8 @@ public class PanelInputFiller implements ItemListener {
 
         draughtField.setToolTipText(language == Language.Russian ? "Осадка судна (для сохранения значения после ввода нажмите 'Enter')" : "Draught of the vessel (to save the value, when finished, press 'Enter')");
 
-        draughtLabel.setVisible(false);
-        draughtField.setVisible(false);
+//        draughtLabel.setVisible(false);
+//        draughtField.setVisible(false);
 
         panelInput.add(draughtLabel);
         panelInput.add(draughtField);
@@ -459,8 +461,8 @@ public class PanelInputFiller implements ItemListener {
 
         volumetricDisplacementField.setToolTipText(language == Language.Russian ? "Объёмное водоизмещение (для сохранения значения после ввода нажмите 'Enter')" : "Volumetric displacement (to save the value, when finished, press 'Enter')");
 
-        volumetricDisplacementLabel.setVisible(false);
-        volumetricDisplacementField.setVisible(false);
+//        volumetricDisplacementLabel.setVisible(false);
+//        volumetricDisplacementField.setVisible(false);
 
         panelInput.add(volumetricDisplacementLabel);
         panelInput.add(volumetricDisplacementField);
@@ -719,12 +721,12 @@ public class PanelInputFiller implements ItemListener {
         List<String> russianFuelShipType = Arrays.stream(FuelTypeRussian.values()).map(FuelTypeRussian::getTitle).toList();
         List<String> englishFuelShipType = Arrays.stream(FuelTypeEnglish.values()).map(FuelTypeEnglish::getTitle).toList();
         JComboBox fuelTypeBox = new JComboBox(language == Language.Russian ? russianFuelShipType.toArray() : englishFuelShipType.toArray());
-        JComboBox engineCountBox = new JComboBox(new Object[]{"1", "2"});
+//        JComboBox engineCountBox = new JComboBox(new Object[]{"1", "2"});
         JComboBox fuelCountBox = new JComboBox(new Object[]{"1", "2"});
 
         table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(70);
-        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
+//        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
         table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(fuelCountBox));
         table.getColumnModel().getColumn(5).setPreferredWidth(100);
@@ -759,32 +761,47 @@ public class PanelInputFiller implements ItemListener {
                         model.setValueAt(null, row, column);
                     } else {
                         if (column == 1) {
-                            if (model.getValueAt(row, column).equals("2")) {
-                                if (row == model.getRowCount() - 1 || (row < model.getRowCount() - 1 && model.getValueAt(row + 1, 0) != null)) {
-                                    String engType = (String) model.getValueAt(row, 0);
-                                    if (engType != null && (engType.equals("Вспомогательный") || engType.equals("Additional"))) {
-                                        model.insertRow(row + 1, new Object[]{null, "----------------", "0"});
-                                        recalculationIncreaseUnEditableCells(row + 1);
-                                        addUnEditableCell(row + 1, column);
-                                        addUnEditableCell(row + 1, 2);
-                                    } else {
-                                        model.insertRow(row + 1, new Object[]{null, "----------------"});
-                                        recalculationIncreaseUnEditableCells(row + 1);
-                                        addUnEditableCell(row + 1, column);
+                            if (model.getValueAt(row, column).equals("0")) {
+                                JOptionPane.showMessageDialog(null, language == Language.Russian ? "Недопустимое значение: количество двигателей не может быть нулевым" : "Unavailable value: engine count can't be zero");
+                                model.setValueAt(null, row, column);
+                            } else {
+                                if (row == 0) {
+                                    int diff = additionalEngineFirstIndex;
+                                    int newCellsCount = Integer.parseInt((String) model.getValueAt(row, column));
+                                    if (diff - newCellsCount > 0) {
+                                        for (int i = diff - 1; i >= newCellsCount; i--) {
+                                            model.removeRow(additionalEngineFirstIndex - 1);
+                                            removeUnEditableCell(additionalEngineFirstIndex - 1, column);
+                                            recalculationDecreaseUnEditableCells(additionalEngineFirstIndex - 1);
+                                            additionalEngineFirstIndex -= 1;
+                                        }
+                                    } else if (diff - newCellsCount < 0) {
+                                        for (int i = diff; i < newCellsCount; i++) {
+                                            model.insertRow(i, new Object[]{null, "----------------"});
+                                            recalculationIncreaseUnEditableCells(i);
+                                            addUnEditableCell(i, column);
+                                            additionalEngineFirstIndex += 1;
+                                        }
                                     }
+                                } else if (row == additionalEngineFirstIndex) {
+                                    int diff = model.getRowCount() - additionalEngineFirstIndex;
+                                    int newCellsCount = Integer.parseInt((String) model.getValueAt(row, column));
 
-                                }
-                            } else if (model.getValueAt(row, column).equals("1")) {
-                                String engType = (String) model.getValueAt(row, 0);
-                                if (engType != null && row < model.getRowCount() - 1) {
-                                    String engTypeSus = (String) model.getValueAt(row + 1, 0);
-                                    if (engTypeSus == null) {
-                                        model.removeRow(row + 1);
-                                        removeUnEditableCell(row + 1, column);
-                                        recalculationDecreaseUnEditableCells(row + 1);
+                                    if (diff - newCellsCount > 0) {
+                                        int size = model.getRowCount();
+                                        for (int i = 0; i < (size - newCellsCount) - additionalEngineFirstIndex; i++) {
+                                            removeUnEditableCell(model.getRowCount() - 1, column);
+                                            model.removeRow(model.getRowCount() - 1);
+                                        }
+                                    } else if (diff - newCellsCount < 0) {
+                                        for (int i = 0; i < newCellsCount - diff; i++) {
+                                            model.addRow(new Object[]{null, "----------------"});
+                                            addUnEditableCell(model.getRowCount() - 1, column);
+                                        }
                                     }
                                 }
                             }
+
                             updatePanelEngine(panelEngine, table);
                         } else if (column == 3) {
                             if (model.getValueAt(row, column).equals("2")) {
@@ -963,16 +980,16 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(panelCranes);
 
 
-        temporaryComponents.add(lengthBetweenPerpendicularsLabel);
-        temporaryComponents.add(lengthBetweenPerpendicularsField);
-        temporaryComponents.add(breadthLabel);
-        temporaryComponents.add(breadthField);
-        temporaryComponents.add(draughtLabel);
-        temporaryComponents.add(draughtField);
+//        temporaryComponents.add(lengthBetweenPerpendicularsLabel);
+//        temporaryComponents.add(lengthBetweenPerpendicularsField);
+//        temporaryComponents.add(breadthLabel);
+//        temporaryComponents.add(breadthField);
+//        temporaryComponents.add(draughtLabel);
+//        temporaryComponents.add(draughtField);
         temporaryComponents.add(deadWeightLabel);
         temporaryComponents.add(deadWeightField);
-        temporaryComponents.add(volumetricDisplacementLabel);
-        temporaryComponents.add(volumetricDisplacementField);
+//        temporaryComponents.add(volumetricDisplacementLabel);
+//        temporaryComponents.add(volumetricDisplacementField);
         temporaryComponents.add(specificCapacityLabel);
         temporaryComponents.add(specificCapacityField);
         temporaryComponents.add(grossTonnageLabel);

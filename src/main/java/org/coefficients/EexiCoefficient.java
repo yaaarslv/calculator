@@ -517,10 +517,10 @@ public class EexiCoefficient {
             } else {
                 sum1 += engine.getP() * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
             }
-//            System.out.println("sum: " + sum1);
+            System.out.println("sum: " + sum1);
         }
 
-//        System.out.println("Fj: " + calculateFj());
+        System.out.println("Fj: " + calculateFj());
 //        System.out.println("P_ME: " + P_ME);
 //        System.out.println("getCByFuel(METype): " + getCByFuel(METype));
 //        System.out.println("SFC_ME1: " + SFC_ME1);
@@ -560,15 +560,15 @@ public class EexiCoefficient {
         double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] * f_w * V_ref * getFm();
 
 
-//        System.out.println("C: " + C);
-//        System.out.println("D: " + D);
-//        System.out.println("calculateFi(): " + calculateFi());
-//        System.out.println("calculateFc(): " + calculateFc());
-//        System.out.println("calculateF_l(): " + calculateF_l());
-//        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
-//        System.out.println("f_w: " + f_w);
-//        System.out.println("V_ref: " + V_ref);
-//        System.out.println("getFm(): " + getFm());
+        System.out.println("C: " + C);
+        System.out.println("D: " + D);
+        System.out.println("calculateFi(): " + calculateFi());
+        System.out.println("calculateFc(): " + calculateFc());
+        System.out.println("calculateF_l(): " + calculateF_l());
+        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
+        System.out.println("f_w: " + f_w);
+        System.out.println("V_ref: " + V_ref);
+        System.out.println("getFm(): " + getFm());
 
         return up / down;
     }
