@@ -92,6 +92,7 @@ public class EexiCoefficient {
         this.SFC_ME_MDO = 0;
         this.SFC_AE_MDO = 0;
         this.f_DF_gas = 1;
+        this.f_ivse = 1;
     }
 
     public List<String> getShipTypeAvailableCorrectionFactors(Language language) {
@@ -177,35 +178,39 @@ public class EexiCoefficient {
 //        return P_ME;
 //    }
 
-//    private double calculateP_AE() {
-//        double P_AE = 0;
-//        double propulsionPower = MCR_ME1 * N1Count + (calculateSumP_PTI_i() / 0.75);
-//        System.out.println("propulsionPower: " + propulsionPower);
-//        System.out.println("calculateSumP_PTI_i: " + calculateSumP_PTI_i());
-//        if (propulsionPower >= 10000) {
-//            P_AE = (0.25 * (propulsionPower)) + 250;
-//        } else {
-//            P_AE = (0.05 * propulsionPower);
-//        }
-//
-//
-//        if (correctionFactors.contains("Повторное сжижение")) {
-//            double COP_reliquefy = (425 * 511) / (24 * 3600 * COP_cooling);
-//            P_AE += CTC_LNG * BOR * R_reliquefy * COP_reliquefy;
-//        }
-//        if (dieselElectricPropulsionPowerPlant) {
-//            double sum = 0;
-//            for (int i = 0; i < N1Count; i++) {
-//                sum += SFC_ME1 * calculateP_ME_i() / 1000;
-//            }
-//            P_AE += 0.33 * sum;
-//
-////            P_AE += 0.02 * (Math.pow(calculateP_ME_i(), 2) + Math.pow(calculateP_ME_i(2), 2) + Math.pow(calculateP_ME_i(3), 2));
-//        }
-//
-//
-//        return P_AE;
-//    }
+    private double calculateP_AE() {
+        double P_AE = 0;
+        double sumMCRME = 0;
+        for (Engine engine : mainEngines) sumMCRME += engine.getMCR();
+        double propulsionPower = sumMCRME + (calculateSumP_PTI_i() / 0.75);
+        System.out.println("propulsionPower: " + propulsionPower);
+        System.out.println("calculateSumP_PTI_i: " + calculateSumP_PTI_i());
+        if (propulsionPower >= 10000) {
+            P_AE = (0.025 * (propulsionPower)) + 250;
+        } else {
+            P_AE = (0.05 * propulsionPower);
+        }
+
+
+        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.Reliquefaction)) {
+            double COP_reliquefy = (425 * 511) / (24 * 3600 * COP_cooling);
+            P_AE += CTC_LNG * BOR * R_reliquefy * COP_reliquefy;
+        }
+        if (shipTypeEnglish == ShipTypeEnglish.GasCarrierLNG && dieselElectricPropulsionPowerPlant) {
+            double sum = 0;
+            for (Engine engine : mainEngines) {
+                FuelTypeEnglish sfc_type = engine.getSFC_map().keySet().stream().filter(fuelTypeEnglish -> fuelTypeEnglish.equals(FuelTypeEnglish.LNG) || fuelTypeEnglish.equals(FuelTypeEnglish.LPG)).findFirst().get();
+                double sfc_gasmode = engine.getSFC_map().get(sfc_type);
+                sum += sfc_gasmode * engine.getP() / 1000;
+            }
+            P_AE += 0.33 * sum;
+
+//            P_AE += 0.02 * (Math.pow(calculateP_ME_i(), 2) + Math.pow(calculateP_ME_i(2), 2) + Math.pow(calculateP_ME_i(3), 2));
+        }
+
+
+        return P_AE;
+    }
 
     private double getCByFuel(FuelTypeEnglish fuelType) {
         return switch (fuelType) {
@@ -388,11 +393,10 @@ public class EexiCoefficient {
             f_cranes = 1;
         }
 
-//        System.out.println("f_l: " + f_cranes * f_sideloader * f_roro);
         return f_cranes * f_sideloader * f_roro;
     }
 
-    private double calculateFcEEDI() {
+    private double calculateFc() {
         double Fc = 1.0;
         if (shipTypeEnglish == ShipTypeEnglish.Tanker && correctionFactorsEnglish.contains(CorrectionFactorEnglish.ChemicalTanker)) {
             if (R < 0.98) {
@@ -411,17 +415,11 @@ public class EexiCoefficient {
             if (R < 0.55) {
                 Fc = Math.pow(R, -0.15);
             }
+        } else if (shipTypeEnglish == ShipTypeEnglish.RoRoCarCarrier && (DWT / GT) < 0.35) {
+            Fc = Math.pow(((DWT / GT) / 0.35), -0.8);
         }
 
         return Fc;
-    }
-
-    private double calculateFc() {
-        if (shipTypeEnglish == ShipTypeEnglish.RoRoCarCarrier && (DWT / GT) < 0.35) {
-            return Math.pow(((DWT / GT) / 0.35), -0.8);
-        } else {
-            return 1;
-        }
     }
 
     private double getFm() {
@@ -429,6 +427,14 @@ public class EexiCoefficient {
             case IA_Arc4_PC7, IA_Super_Arc5_PC6 -> 1.05;
             default -> 1.0;
         };
+    }
+
+    private double calculateFiCSR() {
+        if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier || shipTypeEnglish == ShipTypeEnglish.Tanker) {
+            return 1 + (0.08 * delta / DWT);
+        }
+
+        return 1;
     }
 
     private double calculateFi() {
@@ -534,7 +540,8 @@ public class EexiCoefficient {
             double sfc_type = additionalEngines.getFirst().getSFC_map().get(type);
             sum_CF_SFC_AE += getCByFuel(type) * sfc_type;
         }
-        double B = additionalEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
+        System.out.println("calculateP_AE(): " + calculateP_AE());
+        double B = calculateP_AE() * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
 
 //        System.out.println("P_AE: " + P_AE);
 //        System.out.println("getCByFuel(AEType): " + getCByFuel(AEType));
@@ -558,12 +565,17 @@ public class EexiCoefficient {
             D = f_eff * P_eff * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
         }
 
+        System.out.println("A: " + A);
+        System.out.println("B: " + B);
+        System.out.println("C: " + C);
+        System.out.println("D: " + D);
+
         double up = A + B + C - D;
 
-        double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] * f_w * V_ref * getFm();
+        double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] * f_w * V_ref * getFm() * calculateFiCSR() * f_ivse;
 
 
-        System.out.println("C: " + C);
+        System.out.println("down: " + down);
 //        System.out.println("D: " + D);
 //        System.out.println("calculateFi(): " + calculateFi());
 //        System.out.println("calculateFc(): " + calculateFc());
