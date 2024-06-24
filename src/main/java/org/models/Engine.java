@@ -17,14 +17,16 @@ public class Engine {
     private double MCR;
     private double P;
     private boolean lngIsMainFuel;
+    private double efficiencyOfElectricGenerator;
 
-    public Engine(double fuelTypeCount, double MCR, double p){
+    public Engine(double fuelTypeCount, double MCR, double p, double efficiencyOfElectricGenerator){
         this.fuelTypeCount = fuelTypeCount;
         this.MCR = MCR;
         this.P = p;
         this.fuelTypes = new ArrayList<>();
         this.SFC_map = new HashMap<>();
         this.lngIsMainFuel = true;
+        this.efficiencyOfElectricGenerator = efficiencyOfElectricGenerator;
     }
 
     public void addFuelType(FuelTypeEnglish fuelType, double sfc_fuelType) {

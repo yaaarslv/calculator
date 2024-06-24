@@ -470,12 +470,12 @@ public class PanelInputFiller implements ItemListener {
         specificCapacityLabel = new JLabel(language == Language.Russian ? "<html>Удельная вместимость (R), м<sup>3</sup> / т</html>" : "<html>Specific capacity (R), m<sup>3</sup> / t</html>");
         specificCapacityField = new JTextField();
 
-        specificCapacityLabel.setBounds(10, 375, 210, 20);
+        specificCapacityLabel.setBounds(10, 400, 210, 20);
 
         if (language == Language.Russian) {
-            specificCapacityField.setBounds(220, 375, 90, 20);
+            specificCapacityField.setBounds(220, 400, 90, 20);
         } else {
-            specificCapacityField.setBounds(180, 375, 90, 20);
+            specificCapacityField.setBounds(180, 400, 90, 20);
         }
 
         specificCapacityField.addActionListener(e -> {
@@ -703,14 +703,15 @@ public class PanelInputFiller implements ItemListener {
         };
 
         model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "<html><b>Engine type</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>двигателей</b></html>" : "<html><b>Engine count</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного двигателя, <br>кВт</b></html>" : "<html><b>Power (MCR<sub>i</sub>), kW</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Кол-во</b></html>" : "<html><b>Count</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (MCR<sub>i</sub>), kW</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Количество <br>типов топлива для данного двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "<html><b>Main engine fuel type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "<html><b>Pilotfuel type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC), <br>g / kW * h</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC<sub>Pilotfuel</sub>), <br>g / kW * h</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>КПД эл. генератора, %</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
 
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Additional.getTitle() : EngineTypeEnglish.Additional.getTitle(), null, "0"});
@@ -724,8 +725,8 @@ public class PanelInputFiller implements ItemListener {
 //        JComboBox engineCountBox = new JComboBox(new Object[]{"1", "2"});
         JComboBox fuelCountBox = new JComboBox(new Object[]{"1", "2"});
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(100);
-        table.getColumnModel().getColumn(1).setPreferredWidth(70);
+        table.getColumnModel().getColumn(0).setPreferredWidth(95);
+        table.getColumnModel().getColumn(1).setPreferredWidth(35);
 //        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
         table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(fuelCountBox));
@@ -733,7 +734,8 @@ public class PanelInputFiller implements ItemListener {
         table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
         table.getColumnModel().getColumn(6).setPreferredWidth(100);
         table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
-        table.getColumnModel().getColumn(8).setPreferredWidth(90);
+        table.getColumnModel().getColumn(7).setPreferredWidth(100);
+        table.getColumnModel().getColumn(8).setPreferredWidth(100);
 
         table.getTableHeader().setPreferredSize(new Dimension(1000, 130));
         table.setRowHeight(25);
@@ -777,7 +779,7 @@ public class PanelInputFiller implements ItemListener {
                                         }
                                     } else if (diff - newCellsCount < 0) {
                                         for (int i = diff; i < newCellsCount; i++) {
-                                            model.insertRow(i, new Object[]{null, "----------------"});
+                                            model.insertRow(i, new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9)});
                                             recalculationIncreaseUnEditableCells(i);
                                             addUnEditableCell(i, column);
                                             additionalEngineFirstIndex += 1;
@@ -791,12 +793,16 @@ public class PanelInputFiller implements ItemListener {
                                         int size = model.getRowCount();
                                         for (int i = 0; i < (size - newCellsCount) - additionalEngineFirstIndex; i++) {
                                             removeUnEditableCell(model.getRowCount() - 1, column);
+                                            removeUnEditableCell(model.getRowCount() - 1, 2);
+                                            removeUnEditableCell(model.getRowCount() - 1, 9);
                                             model.removeRow(model.getRowCount() - 1);
                                         }
                                     } else if (diff - newCellsCount < 0) {
                                         for (int i = 0; i < newCellsCount - diff; i++) {
-                                            model.addRow(new Object[]{null, "----------------"});
+                                            model.addRow(new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9)});
                                             addUnEditableCell(model.getRowCount() - 1, column);
+                                            addUnEditableCell(model.getRowCount() - 1, 2);
+                                            addUnEditableCell(model.getRowCount() - 1, 9);
                                         }
                                     }
                                 }
@@ -828,13 +834,13 @@ public class PanelInputFiller implements ItemListener {
         JTextField shaftGenCountField = new JTextField();
 
         if (language == Language.Russian) {
-            shaftGenCountlabel.setBounds(730, 100, 175, 20);
+            shaftGenCountlabel.setBounds(820, 100, 175, 20);
         } else {
-            shaftGenCountlabel.setBounds(760, 100, 175, 20);
+            shaftGenCountlabel.setBounds(850, 100, 175, 20);
         }
 
 
-        shaftGenCountField.setBounds(910, 100, 90, 20);
+        shaftGenCountField.setBounds(1000, 100, 90, 20);
 
         shaftGenCountField.addActionListener(e -> {
             if (!shaftGenCountField.getText().isEmpty() && isNumeric(shaftGenCountField.getText())) {
@@ -854,13 +860,13 @@ public class PanelInputFiller implements ItemListener {
         JTextField shaftGenMcrField = new JTextField();
 
         if (language == Language.Russian) {
-            shaftGenMcrlabel.setBounds(1070, 100, 290, 20);
+            shaftGenMcrlabel.setBounds(1160, 100, 290, 20);
         } else {
-            shaftGenMcrlabel.setBounds(1090, 100, 290, 20);
+            shaftGenMcrlabel.setBounds(1180, 100, 290, 20);
         }
 
 
-        shaftGenMcrField.setBounds(1335, 100, 90, 20);
+        shaftGenMcrField.setBounds(1425, 100, 90, 20);
 
         shaftGenMcrField.addActionListener(e -> {
             if (!shaftGenMcrField.getText().isEmpty() && isNumeric(shaftGenMcrField.getText())) {
@@ -880,13 +886,13 @@ public class PanelInputFiller implements ItemListener {
         JTextField elPropEngCountField = new JTextField();
 
         if (language == Language.Russian) {
-            elPropEngCountlabel.setBounds(690, 125, 225, 20);
+            elPropEngCountlabel.setBounds(780, 125, 225, 20);
         } else {
-            elPropEngCountlabel.setBounds(715, 125, 190, 20);
+            elPropEngCountlabel.setBounds(805, 125, 190, 20);
         }
 
 
-        elPropEngCountField.setBounds(910, 125, 90, 20);
+        elPropEngCountField.setBounds(1000, 125, 90, 20);
 
         elPropEngCountField.addActionListener(e -> {
             if (!elPropEngCountField.getText().isEmpty() && isNumeric(elPropEngCountField.getText())) {
@@ -906,13 +912,13 @@ public class PanelInputFiller implements ItemListener {
         JTextField elPropEngMcrField = new JTextField();
 
         if (language == Language.Russian) {
-            elPropEngMcrlabel.setBounds(1035, 125, 290, 20);
+            elPropEngMcrlabel.setBounds(1125, 125, 290, 20);
         } else {
-            elPropEngMcrlabel.setBounds(1042, 125, 290, 20);
+            elPropEngMcrlabel.setBounds(1132, 125, 290, 20);
         }
 
 
-        elPropEngMcrField.setBounds(1335, 125, 90, 20);
+        elPropEngMcrField.setBounds(1425, 125, 90, 20);
 
         elPropEngMcrField.addActionListener(e -> {
             if (!elPropEngMcrField.getText().isEmpty() && isNumeric(elPropEngMcrField.getText())) {
@@ -1132,20 +1138,14 @@ public class PanelInputFiller implements ItemListener {
 
     private void setEngineTableData(JTable table) {
         int maxIndex = table.getRowCount();
-        System.out.println("maxIndex: " + maxIndex);
         int c = 0;
         while (c < maxIndex) {
-            String engType = (String) table.getValueAt(c, 0);
-            setEngineData(table, c, engType);
-
             int engCount = Integer.parseInt((String) table.getValueAt(c, 1));
-            System.out.println("engCount: " + engCount);
-            if (engCount == 2) {
-                c++;
+            for (int i = 0; i < engCount; i++) {
+                String engType = (String) table.getValueAt(c, 0);
                 setEngineData(table, c, engType);
+                c++;
             }
-
-            c++;
         }
     }
 
@@ -1157,18 +1157,12 @@ public class PanelInputFiller implements ItemListener {
         String pilotFuelTypeStr = (String) table.getValueAt(c, 6);
         double sfcMain = Double.parseDouble((String) table.getValueAt(c, 7));
         double sfcPilot = Double.parseDouble((String) table.getValueAt(c, 8));
+        double efficiencyOfElectricGenerator = (table.getValueAt(c, 9) != null && !table.getValueAt(c, 9).equals("---------")) ? Double.parseDouble((String) table.getValueAt(c, 9)) : 0;
 
         FuelTypeEnglish mainFuelType;
         FuelTypeEnglish pilotFuelType;
 
-        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i);
-        System.out.println("mcr_i: " + mcr_i);
-        System.out.println("fuelTypeCount: " + fuelTypeCount);
-        System.out.println("p_i: " + p_i);
-        System.out.println("mainFuelTypeStr: " + mainFuelTypeStr);
-        System.out.println("pilotFuelTypeStr: " + pilotFuelTypeStr);
-        System.out.println("sfc_main: " + sfcMain);
-        System.out.println("sfc_pilot: " + sfcPilot);
+        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i, efficiencyOfElectricGenerator);
 
         if (language == Language.Russian) {
             FuelTypeRussian mainTypeRussian = FuelTypeRussian.getByTitle(mainFuelTypeStr);
@@ -1176,21 +1170,16 @@ public class PanelInputFiller implements ItemListener {
             mainFuelType = FuelTypeEnglish.valueOf(mainTypeRussian.name());
             if (pilotTypeRussian != null) {
                 pilotFuelType = FuelTypeEnglish.valueOf(pilotTypeRussian.name());
-                System.out.println("pilotFuelType: " + pilotFuelType);
                 engine.addFuelType(pilotFuelType, sfcPilot);
             }
 
         } else {
             mainFuelType = FuelTypeEnglish.getByTitle(mainFuelTypeStr);
             pilotFuelType = FuelTypeEnglish.getByTitle(pilotFuelTypeStr);
-            System.out.println("pilotFuelType: " + pilotFuelType);
             if (pilotFuelType != null) {
                 engine.addFuelType(pilotFuelType, sfcPilot);
             }
         }
-
-        System.out.println("mainFuelType: " + mainFuelType);
-
 
         engine.addFuelType(mainFuelType, sfcMain);
 

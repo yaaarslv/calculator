@@ -156,11 +156,14 @@ public class EexiCoefficient {
         }
 
         if (sum > 0) {
-            return sum / ((efficiencyElectricGeneratorAE + efficiencyElectricGenerator1) / 2);
+            System.out.println("sum: " + sum);
+            System.out.println("additionalEngines.getFirst().getEfficiencyOfElectricGenerator(): " + additionalEngines.getFirst().getEfficiencyOfElectricGenerator());
+            mainEngines.forEach(engine -> System.out.println(engine.getEfficiencyOfElectricGenerator()));
+            additionalEngines.forEach(engine -> System.out.println(engine.getEfficiencyOfElectricGenerator()));
+            return sum / additionalEngines.getFirst().getEfficiencyOfElectricGenerator();
         } else {
             return 0;
         }
-
     }
 
 //    private double calculateP_ME_i() {
@@ -280,7 +283,7 @@ public class EexiCoefficient {
             }
         }
 
-        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.ShuttleTanker)) {
+        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.ShuttleTanker) && DWT >= 80000 && DWT <= 160000) {
             return 0.77;
         } else if (shipTypeEnglish == ShipTypeEnglish.RoRoPassengerCarrier || shipTypeEnglish == ShipTypeEnglish.RoRoCargoCarrier) {
             double F_nl = (0.5144 * V_ref) / (Math.sqrt(L_pp * 9.81));
@@ -385,7 +388,7 @@ public class EexiCoefficient {
             f_cranes = 1;
         }
 
-        System.out.println("f_l: " + f_cranes * f_sideloader * f_roro);
+//        System.out.println("f_l: " + f_cranes * f_sideloader * f_roro);
         return f_cranes * f_sideloader * f_roro;
     }
 
@@ -414,7 +417,7 @@ public class EexiCoefficient {
     }
 
     private double calculateFc() {
-        if (shipTypeEnglish == ShipTypeEnglish.RoRoCarCarrier) {
+        if (shipTypeEnglish == ShipTypeEnglish.RoRoCarCarrier && (DWT / GT) < 0.35) {
             return Math.pow(((DWT / GT) / 0.35), -0.8);
         } else {
             return 1;
@@ -517,10 +520,10 @@ public class EexiCoefficient {
             } else {
                 sum1 += engine.getP() * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
             }
-            System.out.println("sum: " + sum1);
+//            System.out.println("sum: " + sum1);
         }
 
-        System.out.println("Fj: " + calculateFj());
+//        System.out.println("Fj: " + calculateFj());
 //        System.out.println("P_ME: " + P_ME);
 //        System.out.println("getCByFuel(METype): " + getCByFuel(METype));
 //        System.out.println("SFC_ME1: " + SFC_ME1);
@@ -561,14 +564,14 @@ public class EexiCoefficient {
 
 
         System.out.println("C: " + C);
-        System.out.println("D: " + D);
-        System.out.println("calculateFi(): " + calculateFi());
-        System.out.println("calculateFc(): " + calculateFc());
-        System.out.println("calculateF_l(): " + calculateF_l());
-        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
-        System.out.println("f_w: " + f_w);
-        System.out.println("V_ref: " + V_ref);
-        System.out.println("getFm(): " + getFm());
+//        System.out.println("D: " + D);
+//        System.out.println("calculateFi(): " + calculateFi());
+//        System.out.println("calculateFc(): " + calculateFc());
+//        System.out.println("calculateF_l(): " + calculateF_l());
+//        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
+//        System.out.println("f_w: " + f_w);
+//        System.out.println("V_ref: " + V_ref);
+//        System.out.println("getFm(): " + getFm());
 
         return up / down;
     }

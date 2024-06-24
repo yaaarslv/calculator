@@ -14,8 +14,8 @@ public class Main {
         EexiCoefficient coefficient = new EexiCoefficient();
 
 //        Engine me1 = new Engine(2, 4000, 3000);
-        Engine me2 = new Engine(1, 15000, 8250);
-        Engine ae1 = new Engine(1, 0, 625);
+        Engine me2 = new Engine(1, 15000, 8250, 76);
+        Engine ae1 = new Engine(1, 0, 625, 76);
 //        Engine ae2 = new Engine(1, 0, 625);
 //        Engine ae3 = new Engine(1, 0, 625);
 
