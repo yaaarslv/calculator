@@ -178,39 +178,39 @@ public class EexiCoefficient {
 //        return P_ME;
 //    }
 
-    private double calculateP_AE() {
-        double P_AE = 0;
-        double sumMCRME = 0;
-        for (Engine engine : mainEngines) sumMCRME += engine.getMCR();
-        double propulsionPower = sumMCRME + (calculateSumP_PTI_i() / 0.75);
-        System.out.println("propulsionPower: " + propulsionPower);
-        System.out.println("calculateSumP_PTI_i: " + calculateSumP_PTI_i());
-        if (propulsionPower >= 10000) {
-            P_AE = (0.025 * (propulsionPower)) + 250;
-        } else {
-            P_AE = (0.05 * propulsionPower);
-        }
-
-
-        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.Reliquefaction)) {
-            double COP_reliquefy = (425 * 511) / (24 * 3600 * COP_cooling);
-            P_AE += CTC_LNG * BOR * R_reliquefy * COP_reliquefy;
-        }
-        if (shipTypeEnglish == ShipTypeEnglish.GasCarrierLNG && dieselElectricPropulsionPowerPlant) {
-            double sum = 0;
-            for (Engine engine : mainEngines) {
-                FuelTypeEnglish sfc_type = engine.getSFC_map().keySet().stream().filter(fuelTypeEnglish -> fuelTypeEnglish.equals(FuelTypeEnglish.LNG) || fuelTypeEnglish.equals(FuelTypeEnglish.LPG)).findFirst().get();
-                double sfc_gasmode = engine.getSFC_map().get(sfc_type);
-                sum += sfc_gasmode * engine.getP() / 1000;
-            }
-            P_AE += 0.33 * sum;
-
-//            P_AE += 0.02 * (Math.pow(calculateP_ME_i(), 2) + Math.pow(calculateP_ME_i(2), 2) + Math.pow(calculateP_ME_i(3), 2));
-        }
-
-
-        return P_AE;
-    }
+//    private double calculateP_AE() {
+//        double P_AE = 0;
+//        double sumMCRME = 0;
+//        for (Engine engine : mainEngines) sumMCRME += engine.getMCR();
+//        double propulsionPower = sumMCRME + (calculateSumP_PTI_i() / 0.75);
+//        System.out.println("propulsionPower: " + propulsionPower);
+//        System.out.println("calculateSumP_PTI_i: " + calculateSumP_PTI_i());
+//        if (propulsionPower >= 10000) {
+//            P_AE = (0.025 * (propulsionPower)) + 250;
+//        } else {
+//            P_AE = (0.05 * propulsionPower);
+//        }
+//
+//
+//        if (correctionFactorsEnglish.contains(CorrectionFactorEnglish.Reliquefaction)) {
+//            double COP_reliquefy = (425 * 511) / (24 * 3600 * COP_cooling);
+//            P_AE += CTC_LNG * BOR * R_reliquefy * COP_reliquefy;
+//        }
+//        if (shipTypeEnglish == ShipTypeEnglish.GasCarrierLNG && dieselElectricPropulsionPowerPlant) {
+//            double sum = 0;
+//            for (Engine engine : mainEngines) {
+//                FuelTypeEnglish sfc_type = engine.getSFC_map().keySet().stream().filter(fuelTypeEnglish -> fuelTypeEnglish.equals(FuelTypeEnglish.LNG) || fuelTypeEnglish.equals(FuelTypeEnglish.LPG)).findFirst().get();
+//                double sfc_gasmode = engine.getSFC_map().get(sfc_type);
+//                sum += sfc_gasmode * engine.getP() / 1000;
+//            }
+//            P_AE += 0.33 * sum;
+//
+////            P_AE += 0.02 * (Math.pow(calculateP_ME_i(), 2) + Math.pow(calculateP_ME_i(2), 2) + Math.pow(calculateP_ME_i(3), 2));
+//        }
+//
+//
+//        return P_AE;
+//    }
 
     private double getCByFuel(FuelTypeEnglish fuelType) {
         return switch (fuelType) {
@@ -398,23 +398,14 @@ public class EexiCoefficient {
 
     private double calculateFc() {
         double Fc = 1.0;
-        if (shipTypeEnglish == ShipTypeEnglish.Tanker && correctionFactorsEnglish.contains(CorrectionFactorEnglish.ChemicalTanker)) {
-            if (R < 0.98) {
-                Fc = Math.pow(R, -0.7) - 0.014;
-            } else if (R >= 0.98) {
-                Fc = 1.0;
-            }
+        if (shipTypeEnglish == ShipTypeEnglish.Tanker && correctionFactorsEnglish.contains(CorrectionFactorEnglish.ChemicalTanker) && R > 0 && R < 0.98) {
+            Fc = Math.pow(R, -0.7) - 0.014;
         } else if (shipTypeEnglish == ShipTypeEnglish.GasCarrierLNG) {
             Fc = Math.pow(R, -0.56);
-        } else if (shipTypeEnglish == ShipTypeEnglish.RoRoPassengerCarrier) {
-            double div = DWT / GT;
-            if (div < 0.25) {
-                Fc = Math.pow((div / 0.25), -0.8);
-            }
-        } else if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier) {
-            if (R < 0.55) {
-                Fc = Math.pow(R, -0.15);
-            }
+        } else if (shipTypeEnglish == ShipTypeEnglish.RoRoPassengerCarrier && (DWT / GT) < 0.25) {
+            Fc = Math.pow(((DWT / GT) / 0.25), -0.8);
+        } else if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier && R > 0 && R < 0.55) {
+            Fc = Math.pow(R, -0.15);
         } else if (shipTypeEnglish == ShipTypeEnglish.RoRoCarCarrier && (DWT / GT) < 0.35) {
             Fc = Math.pow(((DWT / GT) / 0.35), -0.8);
         }
@@ -431,6 +422,7 @@ public class EexiCoefficient {
 
     private double calculateFiCSR() {
         if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier || shipTypeEnglish == ShipTypeEnglish.Tanker) {
+            System.out.println("delta: " + delta);
             return 1 + (0.08 * delta / DWT);
         }
 
@@ -540,8 +532,8 @@ public class EexiCoefficient {
             double sfc_type = additionalEngines.getFirst().getSFC_map().get(type);
             sum_CF_SFC_AE += getCByFuel(type) * sfc_type;
         }
-        System.out.println("calculateP_AE(): " + calculateP_AE());
-        double B = calculateP_AE() * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
+        System.out.println("additionalEngines.getFirst().getP(): " + additionalEngines.getFirst().getP());
+        double B = additionalEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
 
 //        System.out.println("P_AE: " + P_AE);
 //        System.out.println("getCByFuel(AEType): " + getCByFuel(AEType));
@@ -574,16 +566,18 @@ public class EexiCoefficient {
 
         double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] * f_w * V_ref * getFm() * calculateFiCSR() * f_ivse;
 
-
         System.out.println("down: " + down);
+
 //        System.out.println("D: " + D);
-//        System.out.println("calculateFi(): " + calculateFi());
-//        System.out.println("calculateFc(): " + calculateFc());
-//        System.out.println("calculateF_l(): " + calculateF_l());
-//        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
-//        System.out.println("f_w: " + f_w);
-//        System.out.println("V_ref: " + V_ref);
-//        System.out.println("getFm(): " + getFm());
+        System.out.println("calculateFi(): " + calculateFi());
+        System.out.println("calculateFc(): " + calculateFc());
+        System.out.println("calculateF_l(): " + calculateF_l());
+        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
+        System.out.println("f_w: " + f_w);
+        System.out.println("V_ref: " + V_ref);
+        System.out.println("getFm(): " + getFm());
+        System.out.println("calculateFiCSR(): " + calculateFiCSR());
+        System.out.println("f_ivse: " + f_ivse);
 
         return up / down;
     }

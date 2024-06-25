@@ -84,7 +84,6 @@ public class PanelInputFiller implements ItemListener {
     }
 
     public void addContentToPanelInput(JPanel panelInput) {
-        System.out.println(coefficient.getShipTypeEnglish());
         panelInput.setLayout(null);
         JLabel shipNameLabel = new JLabel(language == Language.Russian ? "Название судна" : "Ship name");
         JTextField shipNameField = new JTextField();
@@ -827,7 +826,10 @@ public class PanelInputFiller implements ItemListener {
 
         });
 
-        panelEngine.add(new JScrollPane(table));
+        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setWheelScrollingEnabled(true);
+
+        panelEngine.add(scrollPane);
         panelInput.add(panelEngine);
 
         JLabel shaftGenCountlabel = new JLabel(language == Language.Russian ? "Количество валогенераторов" : "Shaft generators quantity");
@@ -1192,7 +1194,7 @@ public class PanelInputFiller implements ItemListener {
 
     private void updatePanelEngine(JPanel panel, JTable table) {
         panel.setVisible(false);
-        panel.setBounds(520, 150, 1000, getTableHeight(table));
+        panel.setBounds(520, 150, 1000, Math.min(getTableHeight(table), 400));
         panel.setVisible(true);
     }
 
@@ -1283,6 +1285,11 @@ public class PanelInputFiller implements ItemListener {
             case VSSRoRoPassengerCarrier -> {
                 deadWeightLabel.setVisible(false);
                 deadWeightField.setVisible(false);
+                grossTonnageLabel.setVisible(true);
+                grossTonnageField.setVisible(true);
+            }
+
+            case RoRoCarCarrier -> {
                 grossTonnageLabel.setVisible(true);
                 grossTonnageField.setVisible(true);
             }

@@ -4,13 +4,8 @@ import org.coefficients.EexiCoefficient;
 import org.coefficients.EexiRequiredCoefficient;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Objects;
 
-import static javax.swing.GroupLayout.Alignment.LEADING;
 
 public class InputWindow {
     private final Language language;
