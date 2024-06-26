@@ -1025,19 +1025,24 @@ public class PanelInputFiller implements ItemListener {
         solveButton.addActionListener(e -> {
             coefficient.getMainEngines().clear();
             coefficient.getAdditionalEngines().clear();
-            setEngineTableData(table);
-            if (coefficient.isCargoCranes()) {
-                setCranesTableData(tableCranes);
+            try {
+                setEngineTableData(table);
+                if (coefficient.isCargoCranes()) {
+                    setCranesTableData(tableCranes);
+                }
+
+                double eexi = coefficient.calculateEEXI();
+                double eexi_required = requiredCoefficient.getRequiredEEXI();
+                DecimalFormat df = new DecimalFormat("#.###");
+                String eexi_str = df.format(eexi);
+                String eexi_required_str = df.format(eexi_required);
+                String stock = df.format((eexi_required - eexi) / eexi * 100);
+                JOptionPane.showMessageDialog(null, (language == Language.Russian ? "Достигнутый КЭСС: " + eexi_str + " грамм CO2 / тонн * мили\n" : "Attained EEXI: " + eexi_str + " gramm CO2 / tonn * mile\n") +
+                        (language == Language.Russian ? "Требуемый КЭСС: " + eexi_required_str + " грамм CO2 / тонн * мили\n" : "Required EEXI: " + eexi_required_str + " gramm CO2 / tonn * mile\n") +
+                        (language == Language.Russian ? "Запас: " + stock + "%" : "Stock: " + stock + "%"));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, language == Language.Russian ? "Введены не все необходимые параметры" : "Not all required parameters were input", language == Language.Russian ? "Ошибка" : "Error", JOptionPane.ERROR_MESSAGE);
             }
-            double eexi = coefficient.calculateEEXI();
-            double eexi_required = requiredCoefficient.getRequiredEEXI();
-            DecimalFormat df = new DecimalFormat("#.###");
-            String eexi_str = df.format(eexi);
-            String eexi_required_str = df.format(eexi_required);
-            String stock = df.format((eexi_required - eexi) / eexi * 100);
-            JOptionPane.showMessageDialog(null, (language == Language.Russian ? "Достигнутый КЭСС: " + eexi_str + " грамм CO2 / тонн * мили\n" : "Attained EEXI: " + eexi_str + " gramm CO2 / tonn * mile\n") +
-                    (language == Language.Russian ? "Требуемый КЭСС: " + eexi_required_str + " грамм CO2 / тонн * мили\n" : "Required EEXI: " + eexi_required_str + " gramm CO2 / tonn * mile\n") +
-                    (language == Language.Russian ? "Запас: " + stock + "%" : "Stock: " + stock + "%"));
         });
 
         solveButton.setBounds(10, 750, 150, 20);
@@ -1050,25 +1055,17 @@ public class PanelInputFiller implements ItemListener {
         });
         calculationOfShipPowerPlantLoads.setBounds(10, 680, 300, 15);
 
-        JCheckBox propellerShaftPowerLimitation = new JCheckBox(language == Language.Russian ? "Ограничение мощности на гребном валу" : "Propulsion power limitation");
-        propellerShaftPowerLimitation.addItemListener(e -> {
-            coefficient.setPropellerShaftPowerLimitation(e.getStateChange() == ItemEvent.SELECTED);
-        });
-        propellerShaftPowerLimitation.setBounds(10, 700, 300, 15);
-
         JCheckBox dieselElectricPropulsionPowerPlant = new JCheckBox(language == Language.Russian ? "Дизель-электрическая пропульсивная ЭУ" : "Diesel-electric propulsion");
         dieselElectricPropulsionPowerPlant.addItemListener(e -> {
             coefficient.setDieselElectricPropulsionPowerPlant(e.getStateChange() == ItemEvent.SELECTED);
         });
-        dieselElectricPropulsionPowerPlant.setBounds(10, 720, 300, 15);
+        dieselElectricPropulsionPowerPlant.setBounds(10, 700, 300, 15);
 
         panelInput.add(calculationOfShipPowerPlantLoads);
-        panelInput.add(propellerShaftPowerLimitation);
         panelInput.add(dieselElectricPropulsionPowerPlant);
     }
 
-    private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish
-                                                                          correctionFactorEnglish, boolean show) {
+    private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish, boolean show) {
         ShipTypeEnglish shipTypeEnglish = coefficient.getShipTypeEnglish();
 
         switch (correctionFactorEnglish) {
