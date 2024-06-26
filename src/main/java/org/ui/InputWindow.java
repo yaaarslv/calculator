@@ -9,24 +9,18 @@ import java.awt.*;
 
 public class InputWindow {
     private final Language language;
-    private PanelInputFiller panelInputFiller;
-    private PanelResultFiller panelResultFiller;
-    private final EexiCoefficient coefficient;
-    private final EexiRequiredCoefficient requiredCoefficient;
-    private final JFrame frame;
+    private final PanelInputFiller panelInputFiller;
 
-    public InputWindow(String lang, JFrame frame) {
+    public InputWindow(String lang) {
         if (lang.equals("Русский")) {
             this.language = Language.Russian;
         } else {
             this.language = Language.English;
         }
 
-        this.coefficient = new EexiCoefficient();
-        this.requiredCoefficient = new EexiRequiredCoefficient(coefficient);
+        EexiCoefficient coefficient = new EexiCoefficient();
+        EexiRequiredCoefficient requiredCoefficient = new EexiRequiredCoefficient(coefficient);
         this.panelInputFiller = new PanelInputFiller(coefficient, language, requiredCoefficient);
-        this.panelResultFiller = new PanelResultFiller(coefficient, language);
-        this.frame = frame;
     }
 
     public void createAndShowGUI() {
@@ -36,20 +30,13 @@ public class InputWindow {
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setMinimumSize(new Dimension(400, 400));
 
-        final JTabbedPane tabbedPane = new JTabbedPane();
         JPanel panelInput = new JPanel();
-        JPanel panelResult = new JPanel();
-
         panelInputFiller.addContentToPanelInput(panelInput);
-        panelResultFiller.addContentToPanelResult(panelResult);
 
-        tabbedPane.addTab(language == Language.Russian ? "Ввод данных" : "Data input", panelInput);
-        tabbedPane.addTab(language == Language.Russian ? "Результаты" : "Results", panelResult);
-
+        frame.getContentPane().add(panelInput);
         frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.getContentPane().add(tabbedPane);
         frame.setVisible(true);
     }
 }

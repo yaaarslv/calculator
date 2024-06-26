@@ -11,6 +11,4 @@ public class EnergyEfficiencyProgram {
             startWindow.createAndShowGUI();
         });
     }
-
-
 }

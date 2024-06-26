@@ -704,13 +704,13 @@ public class PanelInputFiller implements ItemListener {
         model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "<html><b>Engine type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Кол-во</b></html>" : "<html><b>Count</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (MCR<sub>i</sub>), kW</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Количество <br>типов топлива для данного двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Кол-во <br>типов топлива <br>для <br>данного двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "<html><b>Main engine fuel type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "<html><b>Pilotfuel type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC), <br>g / kW * h</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC<sub>Pilotfuel</sub>), <br>g / kW * h</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>КПД эл. генератора, %</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>КПД эл. генератора, <br>%</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
 
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Additional.getTitle() : EngineTypeEnglish.Additional.getTitle(), null, "0"});
@@ -729,12 +729,14 @@ public class PanelInputFiller implements ItemListener {
 //        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(engineCountBox));
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
         table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(fuelCountBox));
-        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(55);
+        table.getColumnModel().getColumn(5).setPreferredWidth(120);
         table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
-        table.getColumnModel().getColumn(6).setPreferredWidth(100);
+        table.getColumnModel().getColumn(6).setPreferredWidth(120);
         table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
         table.getColumnModel().getColumn(7).setPreferredWidth(100);
         table.getColumnModel().getColumn(8).setPreferredWidth(100);
+        table.getColumnModel().getColumn(9).setPreferredWidth(60);
 
         table.getTableHeader().setPreferredSize(new Dimension(1000, 130));
         table.setRowHeight(25);

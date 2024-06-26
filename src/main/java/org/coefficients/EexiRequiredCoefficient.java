@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EexiRequiredCoefficient {
-    private List<EexiDecreasingIndex> indexList;
-    private EexiCoefficient coefficient;
+    private final List<EexiDecreasingIndex> indexList;
+    private final EexiCoefficient coefficient;
 
     public EexiRequiredCoefficient(EexiCoefficient coefficient) {
         this.coefficient = coefficient;
@@ -16,41 +16,30 @@ public class EexiRequiredCoefficient {
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.BulkCarrier, 200000, Double.MAX_VALUE, 15, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.BulkCarrier, 20000, 200000, 20, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.BulkCarrier, 10000, 20000, 20, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GasCarrier, 15000, Double.MAX_VALUE, 30, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GasCarrier, 10000, 15000, 30, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GasCarrier, 2000, 10000, 20, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.Tanker, 200000, Double.MAX_VALUE, 15, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.Tanker, 20000, 200000, 20, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.Tanker, 4000, 20000, 20, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 200000, Double.MAX_VALUE, 50, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 120000, 200000, 45, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 80000, 120000, 35, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 40000, 80000, 30, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 15000, 40000, 20, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.ContainerCarrier, 10000, 15000, 20, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GenCargo, 15000, Double.MAX_VALUE, 30, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GenCargo, 3000, 15000, 30, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.Refrigerator, 5000, Double.MAX_VALUE, 15, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.Refrigerator, 3000, 5000, 15, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.CombiShip, 20000, Double.MAX_VALUE, 20, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.CombiShip, 4000, 20000, 20, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.GasCarrierLNG, 10000, Double.MAX_VALUE, 30, false));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.RoRoCarCarrier, 1000, Double.MAX_VALUE, 15, false));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.RoRoCargoCarrier, 2000, Double.MAX_VALUE, 5, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.RoRoCargoCarrier, 1000, 2000, 5, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.RoRoPassengerCarrier, 1000, Double.MAX_VALUE, 5, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.RoRoPassengerCarrier, 250, 1000, 5, true));
-
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.CruisePassengerShip, 85000, Double.MAX_VALUE, 30, false));
         indexList.add(new EexiDecreasingIndex(ShipTypeEnglish.CruisePassengerShip, 25000, 85000, 30, true));
     }

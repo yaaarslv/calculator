@@ -1,7 +1,10 @@
 package org.models;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum IceClassEnglish {
     withoutIceClassOrIce1("Without ice class or Ice1"),
     PC1_PC5_Arc9_Arc6 ("PC1_PC5_Arc9_Arc6"),
@@ -14,10 +17,6 @@ public enum IceClassEnglish {
 
     IceClassEnglish(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public static IceClassEnglish getByTitle(String title) {

@@ -70,12 +70,8 @@ public class EexiCoefficient {
 
     public EexiCoefficient() {
         this.correctionFactorsEnglish = new ArrayList<>();
-//        this.METypes = new ArrayList<>();
-//        this.AETypes = new ArrayList<>();
         this.mainEngines = new ArrayList<>();
         this.additionalEngines = new ArrayList<>();
-//        this.SFC_ME_map = new HashMap<>();
-//        this.SFC_AE_map = new HashMap<>();
         this.energyConsumptionTableExistence = true;
         this.calculationOfShipPowerPlantLoads = false;
         this.propellerShaftPowerLimitation = false;
@@ -148,19 +144,12 @@ public class EexiCoefficient {
     }
 
     private double calculateSumP_PTI_i() {
-//        System.out.println("MCR_PTO: " + MCR_PTO);
-//        System.out.println("shaftGenCount: " + shaftGenCount);
-//        System.out.println("efficiencyElectricGeneratorAE: " + efficiencyElectricGeneratorAE);
         double sum = 0;
         for (int i = 0; i < elPropEngCount; i++) {
             sum += MCR_PTI * 0.75;
         }
 
         if (sum > 0) {
-            System.out.println("sum: " + sum);
-            System.out.println("additionalEngines.getFirst().getEfficiencyOfElectricGenerator(): " + additionalEngines.getFirst().getEfficiencyOfElectricGenerator());
-            mainEngines.forEach(engine -> System.out.println(engine.getEfficiencyOfElectricGenerator()));
-            additionalEngines.forEach(engine -> System.out.println(engine.getEfficiencyOfElectricGenerator()));
             return sum / additionalEngines.getFirst().getEfficiencyOfElectricGenerator();
         } else {
             return 0;
@@ -386,11 +375,10 @@ public class EexiCoefficient {
     }
 
     private double calculateF_l() {
-        double f_cranes = 0;
+        double f_cranes = 1;
         if (cargoCranes) {
-            f_cranes = 1 + ((0.0519 * SWL1 * Reach1 + 32.11) * cargoCrane1Count + (0.0519 * SWL2 * Reach2 + 32.11) * cargoCrane2Count + (0.0519 * SWL3 * Reach3 + 32.11) * cargoCrane3Count) / getCapacityAC()[0];
-        } else {
-            f_cranes = 1;
+            f_cranes = 1 + ((0.0519 * SWL1 * Reach1 + 32.11) * cargoCrane1Count + (0.0519 * SWL2 * Reach2 + 32.11) *
+                    cargoCrane2Count + (0.0519 * SWL3 * Reach3 + 32.11) * cargoCrane3Count) / getCapacityAC()[0];
         }
 
         return f_cranes * f_sideloader * f_roro;
@@ -422,7 +410,6 @@ public class EexiCoefficient {
 
     private double calculateFiCSR() {
         if (shipTypeEnglish == ShipTypeEnglish.BulkCarrier || shipTypeEnglish == ShipTypeEnglish.Tanker) {
-            System.out.println("delta: " + delta);
             return 1 + (0.08 * delta / DWT);
         }
 
@@ -430,7 +417,9 @@ public class EexiCoefficient {
     }
 
     private double calculateFi() {
-        if (iceClassEnglish == IceClassEnglish.IC_Ice2 || iceClassEnglish == IceClassEnglish.IB_Ice3 || iceClassEnglish == IceClassEnglish.IA_Arc4_PC7 || iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
+        if (iceClassEnglish == IceClassEnglish.IC_Ice2 || iceClassEnglish == IceClassEnglish.IB_Ice3
+                || iceClassEnglish == IceClassEnglish.IA_Arc4_PC7
+                || iceClassEnglish == IceClassEnglish.IA_Super_Arc5_PC6) {
             return calculateFiIceClass() * calculateFiCb();
         } else {
             return 1;
@@ -513,18 +502,13 @@ public class EexiCoefficient {
                 double sfc_type = engine.getSFC_map().get(type);
                 sum_CF_SFC_ME += getCByFuel(type) * sfc_type;
             }
+
             if (engine.getFuelTypeCount() == 1 || (engine.getFuelTypeCount() == 2 && engine.isLngIsMainFuel())) {
                 sum1 += engine.getP() * sum_CF_SFC_ME;
             } else {
                 sum1 += engine.getP() * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
             }
-//            System.out.println("sum: " + sum1);
         }
-
-//        System.out.println("Fj: " + calculateFj());
-//        System.out.println("P_ME: " + P_ME);
-//        System.out.println("getCByFuel(METype): " + getCByFuel(METype));
-//        System.out.println("SFC_ME1: " + SFC_ME1);
 
         double A = calculateFj() * sum1;
         double sum_CF_SFC_AE = 0;
@@ -532,12 +516,9 @@ public class EexiCoefficient {
             double sfc_type = additionalEngines.getFirst().getSFC_map().get(type);
             sum_CF_SFC_AE += getCByFuel(type) * sfc_type;
         }
-        System.out.println("additionalEngines.getFirst().getP(): " + additionalEngines.getFirst().getP());
-        double B = additionalEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
 
-//        System.out.println("P_AE: " + P_AE);
-//        System.out.println("getCByFuel(AEType): " + getCByFuel(AEType));
-//        System.out.println("SFC_AE: " + SFC_AE);
+        double B = additionalEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE +
+                (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
 
         double sum_CF_SFC_ME = 0;
         for (Engine engine : mainEngines) {
@@ -546,38 +527,26 @@ public class EexiCoefficient {
                 double sfc_type = engine.getSFC_map().get(type);
                 sum_CF_SFC_ME_i += getCByFuel(type) * sfc_type;
             }
+
             sum_CF_SFC_ME += sum_CF_SFC_ME_i;
         }
 
-        double C = ((calculateFj() * calculateSumP_PTI_i() - f_eff * P_AE_eff) * (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO));
-        double D = 0;
+        double C = ((calculateFj() * calculateSumP_PTI_i() - f_eff * P_AE_eff) *
+                (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO));
+
+        double D;
         if (calculateSumP_PTI_i() > 0) {
-            D = f_eff * ((f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO) + (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO)) / 2 * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
+            D = f_eff * ((f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO) +
+                    (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO)) / 2 *
+                    (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
         } else {
             D = f_eff * P_eff * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
         }
 
-        System.out.println("A: " + A);
-        System.out.println("B: " + B);
-        System.out.println("C: " + C);
-        System.out.println("D: " + D);
-
         double up = A + B + C - D;
 
-        double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] * f_w * V_ref * getFm() * calculateFiCSR() * f_ivse;
-
-        System.out.println("down: " + down);
-
-//        System.out.println("D: " + D);
-        System.out.println("calculateFi(): " + calculateFi());
-        System.out.println("calculateFc(): " + calculateFc());
-        System.out.println("calculateF_l(): " + calculateF_l());
-        System.out.println("getCapacityAC()[0]: " + getCapacityAC()[0]);
-        System.out.println("f_w: " + f_w);
-        System.out.println("V_ref: " + V_ref);
-        System.out.println("getFm(): " + getFm());
-        System.out.println("calculateFiCSR(): " + calculateFiCSR());
-        System.out.println("f_ivse: " + f_ivse);
+        double down = calculateFi() * calculateFc() * calculateF_l() * getCapacityAC()[0] *
+                f_w * V_ref * getFm() * calculateFiCSR() * f_ivse;
 
         return up / down;
     }

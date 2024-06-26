@@ -71,14 +71,14 @@ public class StartWindow {
         russianButton.addActionListener(e -> {
             selectedLanguage = "Русский";
             frame.dispose();
-            inputWindow = new InputWindow(selectedLanguage, frame);
+            inputWindow = new InputWindow(selectedLanguage);
             inputWindow.createAndShowGUI();
         });
 
         englishButton.addActionListener(e -> {
             selectedLanguage = "English";
             frame.dispose();
-            inputWindow = new InputWindow(selectedLanguage, frame);
+            inputWindow = new InputWindow(selectedLanguage);
             inputWindow.createAndShowGUI();
         });
 

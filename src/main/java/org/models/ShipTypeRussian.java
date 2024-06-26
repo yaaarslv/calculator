@@ -1,7 +1,10 @@
 package org.models;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum ShipTypeRussian {
     BulkCarrier("Балкер"),
     GasCarrier("Газовоз"),
@@ -21,10 +24,6 @@ public enum ShipTypeRussian {
 
     ShipTypeRussian(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public static ShipTypeRussian getByTitle(String title) {

@@ -1,7 +1,10 @@
 package org.models;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum FuelTypeEnglish {
     diesel("Diesel/Gas oil"),
     LFO("Light fuel oil"),
@@ -15,10 +18,6 @@ public enum FuelTypeEnglish {
 
     FuelTypeEnglish(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public static FuelTypeEnglish getByTitle(String title) {

@@ -1,7 +1,10 @@
 package org.models;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum CorrectionFactorEnglish {
     MeetsToTheGeneralIACSRules("Meets to the general IACS rules"),
     Reliquefaction("Reliquefaction"),
@@ -17,10 +20,6 @@ public enum CorrectionFactorEnglish {
 
     CorrectionFactorEnglish(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public static CorrectionFactorEnglish getByTitle(String title) {

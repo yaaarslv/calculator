@@ -1,7 +1,10 @@
 package org.models;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum CorrectionFactorRussian {
     MeetsToTheGeneralIACSRules("Соответствует общим Правилам МАКО"),
     Reliquefaction("Повторное сжижение"),
@@ -17,10 +20,6 @@ public enum CorrectionFactorRussian {
 
     CorrectionFactorRussian(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public static CorrectionFactorRussian getByTitle(String title) {
