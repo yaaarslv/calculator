@@ -39,9 +39,9 @@ public class Main {
 //
 //        coefficient.addMainEngine(me2);
 ////        coefficient.addMainEngine(me1);
-//        coefficient.addAdditionalEngine(ae1);
-////        coefficient.addAdditionalEngine(ae2);
-////        coefficient.addAdditionalEngine(ae3);
+//        coefficient.addAuxiliaryEngine(ae1);
+////        coefficient.addAuxiliaryEngine(ae2);
+////        coefficient.addAuxiliaryEngine(ae3);
 ////        coefficient.setC_F_MDO(3.206);
 ////        coefficient.setSFC_ME_MDO(165);
 ////        coefficient.setSFC_AE_MDO(187);

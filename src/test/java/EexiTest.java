@@ -21,7 +21,7 @@ public class EexiTest {
         Engine engineA = new Engine(1, 0, 625, 0);
         engineA.addFuelType(FuelTypeEnglish.diesel, 220);
         coeff.addMainEngine(engineM);
-        coeff.addAdditionalEngine(engineA);
+        coeff.addAuxiliaryEngine(engineA);
         double result = coeff.calculateEEXI();
         DecimalFormat df = new DecimalFormat("#.##");
         String result_str = df.format(result);
@@ -41,7 +41,7 @@ public class EexiTest {
         Engine engineA = new Engine(1, 0, 496.5, 0);
         engineA.addFuelType(FuelTypeEnglish.diesel, 210);
         coeff.addMainEngine(engineM);
-        coeff.addAdditionalEngine(engineA);
+        coeff.addAuxiliaryEngine(engineA);
         double result = coeff.calculateEEXI();
         DecimalFormat df = new DecimalFormat("#.##");
         String result_str = df.format(result);
@@ -63,7 +63,7 @@ public class EexiTest {
         engineA.addFuelType(FuelTypeEnglish.diesel, 7);
         engineA.addFuelType(FuelTypeEnglish.LNG, 160);
         coeff.addMainEngine(engineM);
-        coeff.addAdditionalEngine(engineA);
+        coeff.addAuxiliaryEngine(engineA);
         double result = coeff.calculateEEXI();
         DecimalFormat df = new DecimalFormat("#.##");
         String result_str = df.format(result);

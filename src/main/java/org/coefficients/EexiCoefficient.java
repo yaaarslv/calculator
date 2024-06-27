@@ -18,7 +18,7 @@ public class EexiCoefficient {
     private double GT;
     private double V_ref;
     private List<Engine> mainEngines;
-    private List<Engine> additionalEngines;
+    private List<Engine> auxiliaryEngines;
     private double efficiencyElectricGenerator1;
     private double efficiencyElectricGeneratorAE;
     private double C_F_MDO;
@@ -71,7 +71,7 @@ public class EexiCoefficient {
     public EexiCoefficient() {
         this.correctionFactorsEnglish = new ArrayList<>();
         this.mainEngines = new ArrayList<>();
-        this.additionalEngines = new ArrayList<>();
+        this.auxiliaryEngines = new ArrayList<>();
         this.energyConsumptionTableExistence = true;
         this.calculationOfShipPowerPlantLoads = false;
         this.propellerShaftPowerLimitation = false;
@@ -135,12 +135,12 @@ public class EexiCoefficient {
         this.mainEngines.remove(engine);
     }
 
-    public void addAdditionalEngine(Engine engine) {
-        this.additionalEngines.add(engine);
+    public void addAuxiliaryEngine(Engine engine) {
+        this.auxiliaryEngines.add(engine);
     }
 
-    public void removeAdditionalEngine(Engine engine) {
-        this.additionalEngines.remove(engine);
+    public void removeAuxiliaryEngine(Engine engine) {
+        this.auxiliaryEngines.remove(engine);
     }
 
     private double calculateSumP_PTI_i() {
@@ -150,7 +150,7 @@ public class EexiCoefficient {
         }
 
         if (sum > 0) {
-            return sum / additionalEngines.getFirst().getEfficiencyOfElectricGenerator();
+            return sum / auxiliaryEngines.getFirst().getEfficiencyOfElectricGenerator();
         } else {
             return 0;
         }
@@ -495,6 +495,15 @@ public class EexiCoefficient {
     }
 
     public double calculateEEXI() {
+        if (mainEngines.stream().noneMatch(engine -> engine.getFuelTypeCount() == 2)) {
+            f_DF_gas = 1;
+        } else {
+            if (f_DF_gas < 0.5) {
+                mainEngines.stream().filter(engine -> engine.getFuelTypeCount() == 2).forEach(engine -> engine.setLngIsMainFuel(false));
+                auxiliaryEngines.stream().filter(engine -> engine.getFuelTypeCount() == 2).forEach(engine -> engine.setLngIsMainFuel(false));
+            }
+        }
+
         double sum1 = 0;
         for (Engine engine : mainEngines) {
             double sum_CF_SFC_ME = 0;
@@ -512,12 +521,12 @@ public class EexiCoefficient {
 
         double A = calculateFj() * sum1;
         double sum_CF_SFC_AE = 0;
-        for (FuelTypeEnglish type : additionalEngines.getFirst().getFuelTypes()) {
-            double sfc_type = additionalEngines.getFirst().getSFC_map().get(type);
+        for (FuelTypeEnglish type : auxiliaryEngines.getFirst().getFuelTypes()) {
+            double sfc_type = auxiliaryEngines.getFirst().getSFC_map().get(type);
             sum_CF_SFC_AE += getCByFuel(type) * sfc_type;
         }
 
-        double B = additionalEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE +
+        double B = auxiliaryEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE +
                 (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
 
         double sum_CF_SFC_ME = 0;

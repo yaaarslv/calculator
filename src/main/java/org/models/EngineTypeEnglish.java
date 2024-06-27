@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum EngineTypeEnglish {
     Main("Main"),
-    Additional("Additional");
+    Auxiliary("Auxiliary");
 
     private final String title;
 

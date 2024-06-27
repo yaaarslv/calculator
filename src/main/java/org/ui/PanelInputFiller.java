@@ -28,13 +28,13 @@ public class PanelInputFiller implements ItemListener {
     private final List<JCheckBox> correctionFactorsCheckBoxes;
     private final List<Cell> unEditableCells;
     private final List<Component> temporaryComponents;
-    private int additionalEngineFirstIndex;
+    private int auxiliaryEngineFirstIndex;
     private JLabel volumetricDisplacementLabel;
     private JTextField volumetricDisplacementField;
     private JLabel specificCapacityLabel;
     private JTextField specificCapacityField;
-    private JLabel powerOfAdditionalEnginesLabel;
-    private JTextField powerOfAdditionalEnginesField;
+    private JLabel powerOfAuxiliaryEnginesLabel;
+    private JTextField powerOfAuxiliaryEnginesField;
     private JLabel grossTonnageLabel;
     private JTextField grossTonnageField;
     private JLabel deadWeightLabel;
@@ -63,7 +63,7 @@ public class PanelInputFiller implements ItemListener {
         coefficient.setShipTypeEnglish(ShipTypeEnglish.BulkCarrier);
         coefficient.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         this.temporaryComponents = new ArrayList<>();
-        this.additionalEngineFirstIndex = 1;
+        this.auxiliaryEngineFirstIndex = 1;
     }
 
     private void addUnEditableCell(int row, int column) {
@@ -494,33 +494,33 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(specificCapacityLabel);
         panelInput.add(specificCapacityField);
 
-        powerOfAdditionalEnginesLabel = new JLabel(language == Language.Russian ? "<html>Мощность вспомогательной установки на ходу судна (P<sub>ae</sub>), кВт</html>" : "<html>Power of additional engines (P<sub>ae</sub>), kW</html>");
-        powerOfAdditionalEnginesField = new JTextField();
+        powerOfAuxiliaryEnginesLabel = new JLabel(language == Language.Russian ? "<html>Мощность вспомогательной установки на ходу судна (P<sub>ae</sub>), кВт</html>" : "<html>Power of auxiliary engines (P<sub>ae</sub>), kW</html>");
+        powerOfAuxiliaryEnginesField = new JTextField();
 
-        powerOfAdditionalEnginesLabel.setBounds(10, 400, 400, 20);
+        powerOfAuxiliaryEnginesLabel.setBounds(10, 400, 400, 20);
 
         if (language == Language.Russian) {
-            powerOfAdditionalEnginesField.setBounds(395, 400, 90, 20);
+            powerOfAuxiliaryEnginesField.setBounds(395, 400, 90, 20);
         } else {
-            powerOfAdditionalEnginesField.setBounds(240, 400, 90, 20);
+            powerOfAuxiliaryEnginesField.setBounds(240, 400, 90, 20);
         }
 
-        powerOfAdditionalEnginesField.addActionListener(e -> {
-            if (!powerOfAdditionalEnginesField.getText().isEmpty() && isNumeric(powerOfAdditionalEnginesField.getText())) {
-                coefficient.setP_ae(Double.parseDouble(powerOfAdditionalEnginesField.getText()));
-                powerOfAdditionalEnginesField.setBackground(Color.WHITE);
+        powerOfAuxiliaryEnginesField.addActionListener(e -> {
+            if (!powerOfAuxiliaryEnginesField.getText().isEmpty() && isNumeric(powerOfAuxiliaryEnginesField.getText())) {
+                coefficient.setP_ae(Double.parseDouble(powerOfAuxiliaryEnginesField.getText()));
+                powerOfAuxiliaryEnginesField.setBackground(Color.WHITE);
             } else {
-                powerOfAdditionalEnginesField.setBackground(Color.RED);
+                powerOfAuxiliaryEnginesField.setBackground(Color.RED);
             }
         });
 
-        powerOfAdditionalEnginesField.setToolTipText(language == Language.Russian ? "Мощность вспомогательной установки на ходу судна (для сохранения значения после ввода нажмите 'Enter')" : "Power of additional engines (to save the value, when finished, press 'Enter')");
+        powerOfAuxiliaryEnginesField.setToolTipText(language == Language.Russian ? "Мощность вспомогательной установки на ходу судна (для сохранения значения после ввода нажмите 'Enter')" : "Power of auxiliary engines (to save the value, when finished, press 'Enter')");
 
-        powerOfAdditionalEnginesLabel.setVisible(false);
-        powerOfAdditionalEnginesField.setVisible(false);
+        powerOfAuxiliaryEnginesLabel.setVisible(false);
+        powerOfAuxiliaryEnginesField.setVisible(false);
 
-        panelInput.add(powerOfAdditionalEnginesLabel);
-        panelInput.add(powerOfAdditionalEnginesField);
+        panelInput.add(powerOfAuxiliaryEnginesLabel);
+        panelInput.add(powerOfAuxiliaryEnginesField);
 
         lngTankCapacityLabel = new JLabel(language == Language.Russian ? "<html>Вместимость танков СПГ (CTC<sub>LNG</sub>), м<sup>3</sup></html>" : "<html>LNG tanks capacity (CTC<sub>LNG</sub>), m<sup>3</sup></html>");
         lngTankCapacityField = new JTextField();
@@ -713,7 +713,7 @@ public class PanelInputFiller implements ItemListener {
         model.addColumn(language == Language.Russian ? "<html><b>КПД эл. генератора, <br>%</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
 
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
-        model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Additional.getTitle() : EngineTypeEnglish.Additional.getTitle(), null, "0"});
+        model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Auxiliary.getTitle() : EngineTypeEnglish.Auxiliary.getTitle(), null, "0"});
         addUnEditableCell(1, 2);
         JTable table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
@@ -769,30 +769,30 @@ public class PanelInputFiller implements ItemListener {
                                 model.setValueAt(null, row, column);
                             } else {
                                 if (row == 0) {
-                                    int diff = additionalEngineFirstIndex;
+                                    int diff = auxiliaryEngineFirstIndex;
                                     int newCellsCount = Integer.parseInt((String) model.getValueAt(row, column));
                                     if (diff - newCellsCount > 0) {
                                         for (int i = diff - 1; i >= newCellsCount; i--) {
-                                            model.removeRow(additionalEngineFirstIndex - 1);
-                                            removeUnEditableCell(additionalEngineFirstIndex - 1, column);
-                                            recalculationDecreaseUnEditableCells(additionalEngineFirstIndex - 1);
-                                            additionalEngineFirstIndex -= 1;
+                                            model.removeRow(auxiliaryEngineFirstIndex - 1);
+                                            removeUnEditableCell(auxiliaryEngineFirstIndex - 1, column);
+                                            recalculationDecreaseUnEditableCells(auxiliaryEngineFirstIndex - 1);
+                                            auxiliaryEngineFirstIndex -= 1;
                                         }
                                     } else if (diff - newCellsCount < 0) {
                                         for (int i = diff; i < newCellsCount; i++) {
                                             model.insertRow(i, new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9)});
                                             recalculationIncreaseUnEditableCells(i);
                                             addUnEditableCell(i, column);
-                                            additionalEngineFirstIndex += 1;
+                                            auxiliaryEngineFirstIndex += 1;
                                         }
                                     }
-                                } else if (row == additionalEngineFirstIndex) {
-                                    int diff = model.getRowCount() - additionalEngineFirstIndex;
+                                } else if (row == auxiliaryEngineFirstIndex) {
+                                    int diff = model.getRowCount() - auxiliaryEngineFirstIndex;
                                     int newCellsCount = Integer.parseInt((String) model.getValueAt(row, column));
 
                                     if (diff - newCellsCount > 0) {
                                         int size = model.getRowCount();
-                                        for (int i = 0; i < (size - newCellsCount) - additionalEngineFirstIndex; i++) {
+                                        for (int i = 0; i < (size - newCellsCount) - auxiliaryEngineFirstIndex; i++) {
                                             removeUnEditableCell(model.getRowCount() - 1, column);
                                             removeUnEditableCell(model.getRowCount() - 1, 2);
                                             removeUnEditableCell(model.getRowCount() - 1, 9);
@@ -990,6 +990,111 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(panelCranes);
 
 
+        JLabel pEfflabel = new JLabel(language == Language.Russian ? "<html>Мощность пропульсивной установки ЭЭТ (P<sub>eff</sub>), кВт</html>" : "<html>Power of main engines (P<sub>eff</sub>), kW</html>");
+        JTextField pEffField = new JTextField();
+
+        if (language == Language.Russian) {
+            pEfflabel.setBounds(1100, 725, 390, 20);
+        } else {
+            pEfflabel.setBounds(1215, 725, 390, 20);
+        }
+
+
+        pEffField.setBounds(1425, 725, 90, 20);
+
+        pEffField.addActionListener(e -> {
+            if (!pEffField.getText().isEmpty() && isNumeric(pEffField.getText())) {
+                coefficient.setP_eff(Double.parseDouble(pEffField.getText()));
+                pEffField.setBackground(Color.WHITE);
+            } else {
+                pEffField.setBackground(Color.RED);
+            }
+        });
+
+        pEffField.setToolTipText(language == Language.Russian ? "Мощность пропульсивной установки ЭЭТ (для сохранения значения после ввода нажмите 'Enter')" : "Power of main engines (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(pEfflabel);
+        panelInput.add(pEffField);
+
+        JLabel fEfflabel = new JLabel(language == Language.Russian ? "<html>Коэффициент доступности пропульсивной ЭЭТ (f<sub>eff</sub>)</html>" : "<html>Availability factor of IEET for propulsion (f<sub>eff</sub>)</html>");
+        JTextField fEffField = new JTextField();
+
+        if (language == Language.Russian) {
+            fEfflabel.setBounds(1100, 700, 390, 20);
+        } else {
+            fEfflabel.setBounds(1150, 700, 390, 20);
+        }
+
+
+        fEffField.setBounds(1425, 700, 90, 20);
+
+        fEffField.addActionListener(e -> {
+            if (!fEffField.getText().isEmpty() && isNumeric(fEffField.getText())) {
+                coefficient.setF_eff(Double.parseDouble(fEffField.getText()));
+                fEffField.setBackground(Color.WHITE);
+            } else {
+                fEffField.setBackground(Color.RED);
+            }
+        });
+
+        fEffField.setToolTipText(language == Language.Russian ? "Коэффициент доступности пропульсивной ЭЭТ (для сохранения значения после ввода нажмите 'Enter')" : "Availability factor of IEET for propulsion (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(fEfflabel);
+        panelInput.add(fEffField);
+
+        JLabel pAeEfflabel = new JLabel(language == Language.Russian ? "<html>Мощность пропульсивной установки ЭЭТ (P<sub>AEeff</sub>), кВт</html>" : "<html>Power of auxiliary engines (P<sub>AEeff</sub>), kW</html>");
+        JTextField pAeEffField = new JTextField();
+
+        if (language == Language.Russian) {
+            pAeEfflabel.setBounds(1095, 675, 390, 20);
+        } else {
+            pAeEfflabel.setBounds(1175, 675, 390, 20);
+        }
+
+
+        pAeEffField.setBounds(1425, 675, 90, 20);
+
+        pAeEffField.addActionListener(e -> {
+            if (!pAeEffField.getText().isEmpty() && isNumeric(pAeEffField.getText())) {
+                coefficient.setP_AE_eff(Double.parseDouble(pAeEffField.getText()));
+                pAeEffField.setBackground(Color.WHITE);
+            } else {
+                pAeEffField.setBackground(Color.RED);
+            }
+        });
+
+        pAeEffField.setToolTipText(language == Language.Russian ? "Мощность пропульсивной установки ЭЭТ  (для сохранения значения после ввода нажмите 'Enter')" : "Power of auxiliary engines (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(pAeEfflabel);
+        panelInput.add(pAeEffField);
+
+        JLabel fDfGaslabel = new JLabel(language == Language.Russian ? "<html>Коэффициент наличия газового топлива (f<sub>DFgas</sub>)</html>" : "<html>Factor of availability of gas fuel (f<sub>DFgas</sub>)</html>");
+        JTextField fDfGasField = new JTextField();
+
+        if (language == Language.Russian) {
+            fDfGaslabel.setBounds(360, 125, 390, 20);
+        } else {
+            fDfGaslabel.setBounds(420, 125, 390, 20);
+        }
+
+
+        fDfGasField.setBounds(660, 125, 90, 20);
+
+        fDfGasField.addActionListener(e -> {
+            if (!fDfGasField.getText().isEmpty() && isNumeric(fDfGasField.getText())) {
+                coefficient.setF_DF_gas(Double.parseDouble(fDfGasField.getText()));
+                fDfGasField.setBackground(Color.WHITE);
+            } else {
+                fDfGasField.setBackground(Color.RED);
+            }
+        });
+
+        fDfGasField.setToolTipText(language == Language.Russian ? "Коэффициент наличия газового топлива  (для сохранения значения после ввода нажмите 'Enter')" : "Factor of availability of gas fuel (to save the value, when finished, press 'Enter')");
+
+        panelInput.add(fDfGaslabel);
+        panelInput.add(fDfGasField);
+
+
 //        temporaryComponents.add(lengthBetweenPerpendicularsLabel);
 //        temporaryComponents.add(lengthBetweenPerpendicularsField);
 //        temporaryComponents.add(breadthLabel);
@@ -1004,8 +1109,8 @@ public class PanelInputFiller implements ItemListener {
         temporaryComponents.add(specificCapacityField);
         temporaryComponents.add(grossTonnageLabel);
         temporaryComponents.add(grossTonnageField);
-        temporaryComponents.add(powerOfAdditionalEnginesLabel);
-        temporaryComponents.add(powerOfAdditionalEnginesField);
+        temporaryComponents.add(powerOfAuxiliaryEnginesLabel);
+        temporaryComponents.add(powerOfAuxiliaryEnginesField);
         temporaryComponents.add(lngTankCapacityLabel);
         temporaryComponents.add(lngTankCapacityField);
         temporaryComponents.add(factorOfReliquefyLabel);
@@ -1024,7 +1129,7 @@ public class PanelInputFiller implements ItemListener {
         JButton solveButton = new JButton(language == Language.Russian ? "Вычислить КЭСС" : "Calculate EEXI");
         solveButton.addActionListener(e -> {
             coefficient.getMainEngines().clear();
-            coefficient.getAdditionalEngines().clear();
+            coefficient.getAuxiliaryEngines().clear();
             try {
                 setEngineTableData(table);
                 if (coefficient.isCargoCranes()) {
@@ -1187,7 +1292,7 @@ public class PanelInputFiller implements ItemListener {
         if (engType.equals("Главный") || engType.equals("Main")) {
             coefficient.addMainEngine(engine);
         } else {
-            coefficient.addAdditionalEngine(engine);
+            coefficient.addAuxiliaryEngine(engine);
         }
     }
 
@@ -1263,8 +1368,8 @@ public class PanelInputFiller implements ItemListener {
                 volumetricDisplacementField.setVisible(true);
                 grossTonnageLabel.setVisible(true);
                 grossTonnageField.setVisible(true);
-                powerOfAdditionalEnginesLabel.setVisible(true);
-                powerOfAdditionalEnginesField.setVisible(true);
+                powerOfAuxiliaryEnginesLabel.setVisible(true);
+                powerOfAuxiliaryEnginesField.setVisible(true);
             }
 
             case GasCarrierLNG -> {
@@ -1277,8 +1382,8 @@ public class PanelInputFiller implements ItemListener {
                 deadWeightField.setVisible(false);
                 grossTonnageLabel.setVisible(true);
                 grossTonnageField.setVisible(true);
-                powerOfAdditionalEnginesLabel.setVisible(true);
-                powerOfAdditionalEnginesField.setVisible(true);
+                powerOfAuxiliaryEnginesLabel.setVisible(true);
+                powerOfAuxiliaryEnginesField.setVisible(true);
             }
 
             case VSSRoRoPassengerCarrier -> {
