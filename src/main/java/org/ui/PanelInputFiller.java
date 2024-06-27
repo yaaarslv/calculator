@@ -414,14 +414,14 @@ public class PanelInputFiller implements ItemListener {
         panelInput.add(fwLabel);
         panelInput.add(fwField);
 
-        JLabel fivseLabel = new JLabel(language == Language.Russian ? "<html>Коэффициент особенностей конструкции корпуса (f<sub>iVSE</sub>)</html>" : "<html>Capacity correction factor for ship specific voluntary structural (f<sub>iVSE</sub>)</html>");
+        JLabel fivseLabel = new JLabel(language == Language.Russian ? "<html>Коэфф. особенностей конструкции корпуса (f<sub>iVSE</sub>)</html>" : "<html>Capacity factor for spec. voluntary structural (f<sub>iVSE</sub>)</html>");
         JTextField fivseField = new JTextField();
         if (language == Language.Russian) {
-            fivseLabel.setBounds(10, 350, 350, 20);
-            fivseField.setBounds(360, 350, 90, 20);
+            fivseLabel.setBounds(10, 350, 320, 20);
+            fivseField.setBounds(320, 350, 90, 20);
         } else {
             fivseLabel.setBounds(10, 350, 400, 20);
-            fivseField.setBounds(410, 350, 90, 20);
+            fivseField.setBounds(310, 350, 90, 20);
         }
 
         fivseField.addActionListener(e -> {
@@ -704,13 +704,15 @@ public class PanelInputFiller implements ItemListener {
         model.addColumn(language == Language.Russian ? "<html><b>Тип <br>двигателя</b></html>" : "<html><b>Engine type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Кол-во</b></html>" : "<html><b>Count</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Мощность (MCR<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (MCR<sub>i</sub>), kW</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Кол-во <br>типов топлива <br>для <br>данного двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Мощность (P<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Кол-во <br>типов топлива <br>для <br>данного <br>двигателя </b></html>" : "<html><b>Available fuel type count</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Мощность <br>(P<sub>i</sub>) данного <br>двигателя, <br>кВт</b></html>" : "<html><b>Power (P<sub>i</sub>), kW</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип топлива <br>основного двигателя</b></html>" : "<html><b>Main engine fuel type</b></html>");
         model.addColumn(language == Language.Russian ? "<html><b>Тип запального <br>топлива</b></html>" : "<html><b>Pilotfuel type</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>основного топлива (SFC), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC), <br>g / kW * h</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>Удельный расход <br>запального топлива (SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption fuel oil (SFC<sub>Pilotfuel</sub>), <br>g / kW * h</b></html>");
-        model.addColumn(language == Language.Russian ? "<html><b>КПД эл. генератора, <br>%</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный <br>расход <br>основного топлива <br>(SFC), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption <br>fuel oil <br>(SFC), <br>g / kW * h</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный <br>расход <br>запального топлива <br>(SFC<sub>Pilotfuel</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption <br>fuel oil <br>(SFC<sub>Pilotfuel</sub>), <br>g / kW * h</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>КПД эл. ген-ра, <br>%</b></html>" : "<html><b>Efficiency of el. generator, %</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Удельный <br>расход <br>жидкого <br>топлива <br>(SFC<sub>liquid</sub>), <br>г / кВт * ч</b></html>" : "<html><b>Specific consumption <br>of liquid fuel <br>(SFC<sub>liquid</sub>), <br>g / kW * h</b></html>");
+        model.addColumn(language == Language.Russian ? "<html><b>Коэфф. <br>преобраз. <br>расхода <br>жидкого <br>топлива <br>(С<sub>liquid</sub>)</b></html>" : "<html><b>Conversion factor of <br>liquid fuel <br>consumption <br>(С<sub>liquid</sub>)</b></html>");
 
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Main.getTitle() : EngineTypeEnglish.Main.getTitle()});
         model.addRow(new Object[]{language == Language.Russian ? EngineTypeRussian.Auxiliary.getTitle() : EngineTypeEnglish.Auxiliary.getTitle(), null, "0"});
@@ -734,11 +736,13 @@ public class PanelInputFiller implements ItemListener {
         table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(fuelTypeBox));
         table.getColumnModel().getColumn(6).setPreferredWidth(120);
         table.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(fuelTypeBox));
-        table.getColumnModel().getColumn(7).setPreferredWidth(100);
-        table.getColumnModel().getColumn(8).setPreferredWidth(100);
+        table.getColumnModel().getColumn(7).setPreferredWidth(70);
+        table.getColumnModel().getColumn(8).setPreferredWidth(80);
         table.getColumnModel().getColumn(9).setPreferredWidth(60);
+        table.getColumnModel().getColumn(10).setPreferredWidth(65);
+        table.getColumnModel().getColumn(11).setPreferredWidth(65);
 
-        table.getTableHeader().setPreferredSize(new Dimension(1000, 130));
+        table.getTableHeader().setPreferredSize(new Dimension(1090, 130));
         table.setRowHeight(25);
         table.getTableHeader().setResizingAllowed(false);
 
@@ -748,7 +752,7 @@ public class PanelInputFiller implements ItemListener {
         table.setDefaultRenderer(Object.class, centerRenderer);
 
         panelEngine.setLayout(new BorderLayout());
-        panelEngine.setBounds(520, 160, 1000, getTableHeight(table));
+        panelEngine.setBounds(430, 160, 1090, getTableHeight(table));
         table.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         table.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         model.addTableModelListener(e -> {
@@ -780,7 +784,7 @@ public class PanelInputFiller implements ItemListener {
                                         }
                                     } else if (diff - newCellsCount < 0) {
                                         for (int i = diff; i < newCellsCount; i++) {
-                                            model.insertRow(i, new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9)});
+                                            model.insertRow(i, new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9), model.getValueAt(row, 10), model.getValueAt(row, 11)});
                                             recalculationIncreaseUnEditableCells(i);
                                             addUnEditableCell(i, column);
                                             auxiliaryEngineFirstIndex += 1;
@@ -800,7 +804,7 @@ public class PanelInputFiller implements ItemListener {
                                         }
                                     } else if (diff - newCellsCount < 0) {
                                         for (int i = 0; i < newCellsCount - diff; i++) {
-                                            model.addRow(new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9)});
+                                            model.addRow(new Object[]{model.getValueAt(row, 0), "---------", model.getValueAt(row, 2), model.getValueAt(row, 3), model.getValueAt(row, 4), model.getValueAt(row, 5), model.getValueAt(row, 6), model.getValueAt(row, 7), model.getValueAt(row, 8), model.getValueAt(row, 9), model.getValueAt(row, 10), model.getValueAt(row, 11)});
                                             addUnEditableCell(model.getRowCount() - 1, column);
                                             addUnEditableCell(model.getRowCount() - 1, 2);
                                             addUnEditableCell(model.getRowCount() - 1, 9);
@@ -814,11 +818,17 @@ public class PanelInputFiller implements ItemListener {
                             if (model.getValueAt(row, column).equals("2")) {
                                 removeUnEditableCell(row, 6);
                                 removeUnEditableCell(row, 8);
+                                removeUnEditableCell(row, 10);
+                                removeUnEditableCell(row, 11);
                             } else if (model.getValueAt(row, column).equals("1")) {
                                 model.setValueAt("----------------", row, 6);
                                 model.setValueAt("0", row, 8);
+                                model.setValueAt("0", row, 10);
+                                model.setValueAt("0", row, 11);
                                 addUnEditableCell(row, 6);
                                 addUnEditableCell(row, 8);
+                                addUnEditableCell(row, 10);
+                                addUnEditableCell(row, 11);
                             }
                         }
 
@@ -944,8 +954,8 @@ public class PanelInputFiller implements ItemListener {
 
         modelCranes.addColumn("");
         modelCranes.addColumn(language == Language.Russian ? "<html><b>Количество кранов <br>одинаковой грузоподъёмности</b></html>" : "<html><b>Cranes count with equal load capacity</b></html>");
-        modelCranes.addColumn(language == Language.Russian ? "<html><b>Грузоподъёмность, т</b></html>" : "<html><b>Load capacity, t</b></html>");
-        modelCranes.addColumn(language == Language.Russian ? "<html><b>Высота <br>подъёма, м</b></html>" : "<html><b>Reach, m</b></html>");
+        modelCranes.addColumn(language == Language.Russian ? "<html><b>Грузо-<br>подъёмность, <br>т</b></html>" : "<html><b>Load capacity, <br>t</b></html>");
+        modelCranes.addColumn(language == Language.Russian ? "<html><b>Высота <br>подъёма, <br>м</b></html>" : "<html><b>Reach, <br>m</b></html>");
 
         modelCranes.addRow(new Object[]{language == Language.Russian ? "Грузовые краны 1" : "Cargo cranes 1"});
         modelCranes.addRow(new Object[]{language == Language.Russian ? "Грузовые краны 2" : "Cargo cranes 2"});
@@ -954,19 +964,19 @@ public class PanelInputFiller implements ItemListener {
         JTable tableCranes = new JTable(modelCranes);
         tableCranes.getTableHeader().setReorderingAllowed(false);
 
-        tableCranes.getColumnModel().getColumn(0).setPreferredWidth(120);
-        tableCranes.getColumnModel().getColumn(1).setPreferredWidth(130);
-        tableCranes.getColumnModel().getColumn(2).setPreferredWidth(140);
-        tableCranes.getColumnModel().getColumn(3).setPreferredWidth(75);
+        tableCranes.getColumnModel().getColumn(0).setPreferredWidth(110);
+        tableCranes.getColumnModel().getColumn(1).setPreferredWidth(120);
+        tableCranes.getColumnModel().getColumn(2).setPreferredWidth(90);
+        tableCranes.getColumnModel().getColumn(3).setPreferredWidth(70);
 
-        tableCranes.getTableHeader().setPreferredSize(new Dimension(455, 90));
+        tableCranes.getTableHeader().setPreferredSize(new Dimension(390, 90));
         tableCranes.setRowHeight(25);
         tableCranes.getTableHeader().setResizingAllowed(false);
 
         tableCranes.setDefaultRenderer(Object.class, centerRenderer);
 
         panelCranes.setLayout(new BorderLayout());
-        panelCranes.setBounds(10, 480, 455, getTableHeight(tableCranes));
+        panelCranes.setBounds(10, 480, 390, getTableHeight(tableCranes));
         tableCranes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         tableCranes.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         modelCranes.addTableModelListener(e -> {
@@ -1268,7 +1278,7 @@ public class PanelInputFiller implements ItemListener {
         FuelTypeEnglish mainFuelType;
         FuelTypeEnglish pilotFuelType;
 
-        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i, efficiencyOfElectricGenerator);
+        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i, efficiencyOfElectricGenerator, 0.0, 0.0);
 
         if (language == Language.Russian) {
             FuelTypeRussian mainTypeRussian = FuelTypeRussian.getByTitle(mainFuelTypeStr);
@@ -1298,7 +1308,7 @@ public class PanelInputFiller implements ItemListener {
 
     private void updatePanelEngine(JPanel panel, JTable table) {
         panel.setVisible(false);
-        panel.setBounds(520, 150, 1000, Math.min(getTableHeight(table), 400));
+        panel.setBounds(430, 160, 1090, Math.min(getTableHeight(table), 400));
         panel.setVisible(true);
     }
 
