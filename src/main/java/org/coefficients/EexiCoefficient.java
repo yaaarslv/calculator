@@ -21,9 +21,6 @@ public class EexiCoefficient {
     private List<Engine> auxiliaryEngines;
     private double efficiencyElectricGenerator1;
     private double efficiencyElectricGeneratorAE;
-    private double C_F_MDO;
-    private double SFC_ME_MDO;
-    private double SFC_AE_MDO;
     private double shaftGenCount;
     private double elPropEngCount;
     private double MCR_PTO;
@@ -84,9 +81,6 @@ public class EexiCoefficient {
         this.P_AE_eff = 0;
         this.P_eff = 0;
         this.f_AE_eff = 0;
-        this.C_F_MDO = 0;
-        this.SFC_ME_MDO = 0;
-        this.SFC_AE_MDO = 0;
         this.f_DF_gas = 1;
         this.f_ivse = 1;
     }
@@ -515,7 +509,7 @@ public class EexiCoefficient {
             if (engine.getFuelTypeCount() == 1 || (engine.getFuelTypeCount() == 2 && engine.isLngIsMainFuel())) {
                 sum1 += engine.getP() * sum_CF_SFC_ME;
             } else {
-                sum1 += engine.getP() * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
+                sum1 += engine.getP() * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * engine.getCF_liquid() * engine.getSFC_liquid());
             }
         }
 
@@ -527,7 +521,7 @@ public class EexiCoefficient {
         }
 
         double B = auxiliaryEngines.getFirst().getP() * (f_DF_gas * sum_CF_SFC_AE +
-                (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO);
+                (1 - f_DF_gas) * auxiliaryEngines.getFirst().getCF_liquid() * auxiliaryEngines.getFirst().getSFC_liquid());
 
         double sum_CF_SFC_ME = 0;
         for (Engine engine : mainEngines) {
@@ -541,15 +535,15 @@ public class EexiCoefficient {
         }
 
         double C = ((calculateFj() * calculateSumP_PTI_i() - f_eff * P_AE_eff) *
-                (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO));
+                (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * auxiliaryEngines.getFirst().getCF_liquid() * auxiliaryEngines.getFirst().getSFC_liquid()));
 
         double D;
         if (calculateSumP_PTI_i() > 0) {
-            D = f_eff * ((f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO) +
-                    (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * C_F_MDO * SFC_AE_MDO)) / 2 *
-                    (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
+            D = f_eff * ((f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * mainEngines.getFirst().getCF_liquid() * mainEngines.getFirst().getSFC_liquid()) +
+                    (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * auxiliaryEngines.getFirst().getCF_liquid() * auxiliaryEngines.getFirst().getSFC_liquid())) / 2 *
+                    (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * mainEngines.getFirst().getCF_liquid() * mainEngines.getFirst().getSFC_liquid());
         } else {
-            D = f_eff * P_eff * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * C_F_MDO * SFC_ME_MDO);
+            D = f_eff * P_eff * (f_DF_gas * sum_CF_SFC_ME + (1 - f_DF_gas) * mainEngines.getFirst().getCF_liquid() * mainEngines.getFirst().getSFC_liquid());
         }
 
         double up = A + B + C - D;
