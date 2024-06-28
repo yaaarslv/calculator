@@ -1176,8 +1176,15 @@ public class PanelInputFiller implements ItemListener {
         });
         dieselElectricPropulsionPowerPlant.setBounds(10, 700, 300, 15);
 
+        JCheckBox steamTurbinePowerPlant = new JCheckBox(language == Language.Russian ? "Паротурбинная ЭУ" : "Steam turbine power plant");
+        steamTurbinePowerPlant.addItemListener(e -> {
+            coefficient.setSteamTurbinePowerPlant(e.getStateChange() == ItemEvent.SELECTED);
+        });
+        steamTurbinePowerPlant.setBounds(10, 720, 300, 15);
+
         panelInput.add(calculationOfShipPowerPlantLoads);
         panelInput.add(dieselElectricPropulsionPowerPlant);
+        panelInput.add(steamTurbinePowerPlant);
     }
 
     private void changeFieldsVisibleByShipTypeAndCorrectionFactor(CorrectionFactorEnglish correctionFactorEnglish, boolean show) {
@@ -1273,12 +1280,14 @@ public class PanelInputFiller implements ItemListener {
         String pilotFuelTypeStr = (String) table.getValueAt(c, 6);
         double sfcMain = Double.parseDouble((String) table.getValueAt(c, 7));
         double sfcPilot = Double.parseDouble((String) table.getValueAt(c, 8));
-        double efficiencyOfElectricGenerator = (table.getValueAt(c, 9) != null && !table.getValueAt(c, 9).equals("---------")) ? Double.parseDouble((String) table.getValueAt(c, 9)) : 0;
+        double efficiencyOfElectricGenerator = (table.getValueAt(c, 9) != null) ? Double.parseDouble((String) table.getValueAt(c, 9)) : 0;
+        double sfcLiquid = (table.getValueAt(c, 10) != null) ? Double.parseDouble((String) table.getValueAt(c, 10)) : 0;
+        double cLiquid = (table.getValueAt(c, 11) != null) ? Double.parseDouble((String) table.getValueAt(c, 11)) : 0;
 
         FuelTypeEnglish mainFuelType;
         FuelTypeEnglish pilotFuelType;
 
-        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i, efficiencyOfElectricGenerator, 0.0, 0.0);
+        Engine engine = new Engine(fuelTypeCount, mcr_i, p_i, efficiencyOfElectricGenerator / 100, cLiquid, sfcLiquid);
 
         if (language == Language.Russian) {
             FuelTypeRussian mainTypeRussian = FuelTypeRussian.getByTitle(mainFuelTypeStr);

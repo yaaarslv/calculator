@@ -16,9 +16,9 @@ public class EexiTest {
         coeff.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         coeff.setDWT(150000);
         coeff.setV_ref(13.20);
-        Engine engineM = new Engine(1, 15000, 8250, 0);
+        Engine engineM = new Engine(1, 15000, 8250, 0, 0 ,0);
         engineM.addFuelType(FuelTypeEnglish.diesel, 166.5);
-        Engine engineA = new Engine(1, 0, 625, 0);
+        Engine engineA = new Engine(1, 0, 625, 0, 0 ,0);
         engineA.addFuelType(FuelTypeEnglish.diesel, 220);
         coeff.addMainEngine(engineM);
         coeff.addAuxiliaryEngine(engineA);
@@ -36,9 +36,9 @@ public class EexiTest {
         coeff.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         coeff.setDWT(81200);
         coeff.setV_ref(14);
-        Engine engineM = new Engine(1, 9930, 7447.5, 0);
+        Engine engineM = new Engine(1, 9930, 7447.5, 0, 0 ,0);
         engineM.addFuelType(FuelTypeEnglish.diesel, 165);
-        Engine engineA = new Engine(1, 0, 496.5, 0);
+        Engine engineA = new Engine(1, 0, 496.5, 0, 0 ,0);
         engineA.addFuelType(FuelTypeEnglish.diesel, 210);
         coeff.addMainEngine(engineM);
         coeff.addAuxiliaryEngine(engineA);
@@ -56,10 +56,10 @@ public class EexiTest {
         coeff.setIceClassEnglish(IceClassEnglish.withoutIceClassOrIce1);
         coeff.setDWT(81200);
         coeff.setV_ref(14);
-        Engine engineM = new Engine(2, 9930, 7447.5, 0);
+        Engine engineM = new Engine(2, 9930, 7447.5, 0, 0 ,0);
         engineM.addFuelType(FuelTypeEnglish.diesel, 6);
         engineM.addFuelType(FuelTypeEnglish.LNG, 136);
-        Engine engineA = new Engine(2, 0, 496.5, 0);
+        Engine engineA = new Engine(2, 0, 496.5, 0, 0 ,0);
         engineA.addFuelType(FuelTypeEnglish.diesel, 7);
         engineA.addFuelType(FuelTypeEnglish.LNG, 160);
         coeff.addMainEngine(engineM);

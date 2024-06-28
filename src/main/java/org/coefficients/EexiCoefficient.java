@@ -41,6 +41,7 @@ public class EexiCoefficient {
     private boolean calculationOfShipPowerPlantLoads;
     private boolean propellerShaftPowerLimitation;
     private boolean dieselElectricPropulsionPowerPlant;
+    private boolean steamTurbinePowerPlant;
     private double CTC_LNG;
     private double R_reliquefy;
     private double BOR;
@@ -73,6 +74,7 @@ public class EexiCoefficient {
         this.calculationOfShipPowerPlantLoads = false;
         this.propellerShaftPowerLimitation = false;
         this.dieselElectricPropulsionPowerPlant = false;
+        this.steamTurbinePowerPlant = false;
         this.cargoCranes = false;
         this.sideRamp = false;
         this.cargoRamp = false;
@@ -139,8 +141,10 @@ public class EexiCoefficient {
 
     private double calculateSumP_PTI_i() {
         double sum = 0;
+        double coeff = steamTurbinePowerPlant ? 0.83 : 0.75;
+
         for (int i = 0; i < elPropEngCount; i++) {
-            sum += MCR_PTI * 0.75;
+            sum += MCR_PTI * coeff;
         }
 
         if (sum > 0) {
@@ -533,7 +537,7 @@ public class EexiCoefficient {
 
             sum_CF_SFC_ME += sum_CF_SFC_ME_i;
         }
-
+        System.out.println("pti: " + calculateSumP_PTI_i());
         double C = ((calculateFj() * calculateSumP_PTI_i() - f_eff * P_AE_eff) *
                 (f_DF_gas * sum_CF_SFC_AE + (1 - f_DF_gas) * auxiliaryEngines.getFirst().getCF_liquid() * auxiliaryEngines.getFirst().getSFC_liquid()));
 
