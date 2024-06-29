@@ -24,7 +24,7 @@ public class InputWindow {
     }
 
     public void createAndShowGUI() {
-        ImageIcon icon = new ImageIcon("src/main/resources/rmrs.png");
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("rmrs.png"));
         JFrame frame = new JFrame(language == Language.Russian ? "Расчет коэффициента энергоэффективности существующего судна " +
                 "(КЭСС)" : "Calculation of the energy efficiency existing ship index (EEXI)");
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);

@@ -26,7 +26,7 @@ public class StartWindow {
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
 
-        ImageIcon icon = new ImageIcon("src/main/resources/rmrs.png");
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("rmrs.png"));
         JPanel titlePanel = new JPanel();
 
         frame.setIconImage(icon.getImage());
