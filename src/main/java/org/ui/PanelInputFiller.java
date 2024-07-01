@@ -1429,21 +1429,21 @@ public class PanelInputFiller implements ItemListener {
                 coefficient.setIceClassEnglish(IceClassEnglish.getByTitle(selectedItem.toString()));
             }
 
-            if (coefficient.getIceClassEnglish() != IceClassEnglish.withoutIceClassOrIce1) {
-                lengthBetweenPerpendicularsLabel.setVisible(true);
-                breadthLabel.setVisible(true);
-                draughtLabel.setVisible(true);
-                lengthBetweenPerpendicularsField.setVisible(true);
-                breadthField.setVisible(true);
-                draughtField.setVisible(true);
-            } else {
-                lengthBetweenPerpendicularsLabel.setVisible(false);
-                breadthLabel.setVisible(false);
-                draughtLabel.setVisible(false);
-                lengthBetweenPerpendicularsField.setVisible(false);
-                breadthField.setVisible(false);
-                draughtField.setVisible(false);
-            }
+//            if (coefficient.getIceClassEnglish() != IceClassEnglish.withoutIceClassOrIce1) {
+//                lengthBetweenPerpendicularsLabel.setVisible(true);
+//                breadthLabel.setVisible(true);
+//                draughtLabel.setVisible(true);
+//                lengthBetweenPerpendicularsField.setVisible(true);
+//                breadthField.setVisible(true);
+//                draughtField.setVisible(true);
+//            } else {
+//                lengthBetweenPerpendicularsLabel.setVisible(false);
+//                breadthLabel.setVisible(false);
+//                draughtLabel.setVisible(false);
+//                lengthBetweenPerpendicularsField.setVisible(false);
+//                breadthField.setVisible(false);
+//                draughtField.setVisible(false);
+//            }
         }
     }
 
